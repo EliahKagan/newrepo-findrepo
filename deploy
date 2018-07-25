@@ -1,2 +1,2 @@
 #!/bin/sh
-install -g mob -m 750 newrepo /usr/local/
+install -g mob -m 750 newrepo /usr/local/bin/

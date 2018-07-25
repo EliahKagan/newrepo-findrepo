@@ -1,0 +1,5 @@
+#!/bin/sh
+# This utility creates a new repo on the server. Usage:
+#    newrepo NAME
+
+cd /repos && mkdir "$1.git" && cd "$1.git" && git init --bare

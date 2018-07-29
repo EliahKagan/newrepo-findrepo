@@ -2,4 +2,9 @@
 # This utility creates a new repo on the server. Usage:
 #    newrepo NAME
 
+if [ -z "$1" ]; then
+    printf 'What do you want to call the new repo?\n' >&2
+    exit 1
+fi
+
 cd /repos && mkdir "$1.git" && cd "$1.git" && git init --bare

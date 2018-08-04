@@ -11,4 +11,4 @@ dir="$1.git"
 url="ssh://team-roach.ddns.net/repos/$dir"
 
 cd /repos && mkdir "$dir" && cd "$dir" && git init --bare &&
-    printf '\nThe URL of the newly created repository is:\n\n\t%s\n' "$url"
+    printf '\nThe URL of the newly created repository is:\n\n\t%s\n\n' "$url"

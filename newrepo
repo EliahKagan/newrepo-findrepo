@@ -7,4 +7,8 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-cd /repos && mkdir "$1.git" && cd "$1.git" && git init --bare
+dir="$1.git"
+url="ssh://team-roach.ddns.net/repos/$dir"
+
+cd /repos && mkdir "$dir" && cd "$dir" && git init --bare &&
+    printf '\nThe URL of the newly created repository is:\n\n\t%s\n' "$url"

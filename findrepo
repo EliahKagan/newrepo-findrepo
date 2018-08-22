@@ -40,7 +40,6 @@ def all_repos_case_variants():
 
 def show_url(repo):
     '''Displays the repo URL in a manner similar to the output of newrepo.'''
-    print()
     print('The URL for the repository "%s" is:' % repo)
     print()
     print('\tssh://team-roach.ddns.net/repos/%s%s' % (repo, GIT_SUFFIX))
@@ -77,6 +76,7 @@ try:
     elif len(row) == 1:
         # We have no exact match, but there is a unique case-insensitive match.
         print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
+        print()
         show_url(row[0])
         print("BEWARE! The filesystem on this server is case-sensitive.")
         print()

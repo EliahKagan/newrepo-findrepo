@@ -79,6 +79,7 @@ try:
         print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
         show_url(row[0])
         print("BEWARE! The filesystem on this server is case-sensitive.")
+        print()
     else:
         # We have no exact match. There are multiple case-insensitive matches.
         print('I have no "%s" repo. Maybe you want one of these...' % pattern)

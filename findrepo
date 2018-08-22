@@ -83,8 +83,8 @@ def show_repos(row):
 
 def substring_frequency_vector(key):
     '''Computes (substring -> frequency) mappings. Returns them as a Counter.'''
-    return collections.Counter(key[i:j] for j in range(len(key))
-                                        for i in range(j))
+    return collections.Counter(key[start:stop] for stop in range(len(key) + 1)
+                                               for start in range(j))
 
 def inner_product(u, v):
     '''Computes the dot product of two (substr -> freq) mappings.'''

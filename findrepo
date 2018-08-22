@@ -103,8 +103,8 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     pattern_square = square(pattern_vector)
 
     def pattern_similarity(key):
-        print('DEBUG: {}, {}'.format(squares[key], pattern_square),
-              file=sys.stderr) # FIXME: remove this statement after debugging!
+        #print('DEBUG: {}, {}'.format(squares[key], pattern_square),
+        #      file=sys.stderr) # FIXME: remove this statement after debugging!
         return (inner_product(vectors[key], pattern_vector)
                     / math.sqrt(squares[key] * pattern_square))
     

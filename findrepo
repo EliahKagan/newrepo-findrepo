@@ -181,7 +181,7 @@ except KeyError:
     print()
 
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
-    prev_similarity = -float('inf')
+    prev_similarity = float('inf')
 
     for key, similarity in guesses:
         assert similarity <= prev_similarity, \

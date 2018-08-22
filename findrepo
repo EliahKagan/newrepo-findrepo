@@ -14,10 +14,14 @@ GIT_SUFFIX = '.git'
 COSINE_SIMILARITY_DEBUG_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
 
 # When no repo matches the user's pattern, even case-insensitively, we guess
-# based on cosine similarity of multisets of proper substrings. We will show
-# at least this many guesses unless it is more than the number of known repos.
-# However, we may show more, if it would be confusing not to (see below).
+# based on cosine similarity of multisets of proper substrings. We show at least
+# this many guesses unless no known repos have even slightly similar names. Note
+# that we may show more, if it would be confusing not to. (See below.)
 COSINE_SIMILARITY_SUGGESTION_COUNT = 5
+
+# Repos with cosine similarity less than this value to this pattern will not be
+# shown, even if they are the closest matches.
+COSINE_SIMILARITY_CUTOFF = 0.1
 
 # In accordance with the principle of least astonishment, if a guessed repo is
 # listed, all repos that match at least as well are listed too. It feels like
@@ -178,13 +182,17 @@ except KeyError:
         print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
         exit(0)
     
+    prev_similarity = guesses[0].similarity
+    if prev_similarity < COSINE_SIMILARITY_CUTOFF:
+        print('I have no "%s" repo, nor any named even vaguely like it.'
+                % pattern
+        exit(0)
+    
     print('I have no "%s" repo. These repos have vaguely similar names...'
             % pattern)
     print()
 
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
-    prev_similarity = float('inf')
-
     for key, similarity in guesses:
         assert similarity <= prev_similarity, \
                'more similar guesses should appear before less similar guesses'

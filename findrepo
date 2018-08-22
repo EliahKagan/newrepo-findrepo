@@ -17,7 +17,7 @@ COSINE_SIMILARITY_DEBUG_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
 # based on cosine similarity of multisets of proper substrings. We will show
 # at least this many guesses unless it is more than the number of known repos.
 # However, we may show more, if it would be confusing not to (see below).
-COSINE_SIMILARITY_SUGGESTION_COUNT = 3
+COSINE_SIMILARITY_SUGGESTION_COUNT = 5
 
 # In accordance with the principle of least astonishment, if a guessed repo is
 # listed, all repos that match at least as well are listed too. It feels like

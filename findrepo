@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import collections
+import contextlib
 import glob
 import math
 import os
@@ -27,6 +28,11 @@ COSINE_SIMILARITY_SUGGESTION_COUNT = 3
 # Also, you might want matches that are believed to be fairly bad, for debugging
 # purposes. For that, increase this to some even bigger positive value.
 COSINE_SIMILARITY_EPSILON = 0.0
+
+assert(COSINE_SIMILARITY_SUGGESTION_COUNT > 0)
+assert(COSINE_SIMILARITY_EPSILON >= 0.0)
+
+Guess = collections.namedtuple('Guess', ('key', 'similarity'))
 
 def usage():
     '''Prints a usage message and exits.'''
@@ -70,6 +76,11 @@ def show_url(repo):
     print('\tssh://team-roach.ddns.net/repos/%s%s' % (repo, GIT_SUFFIX))
     print()
 
+def show_repos(row):
+    '''Prints all repo names in row.'''
+    for repo in row:
+        print('\t%s' % repo)
+
 def substring_frequency_vector(key):
     '''Computes (substring -> frequency) mappings. Returns them as a Counter.'''
     return collections.Counter(key[i:j] for j in range(len(key))
@@ -83,10 +94,10 @@ def square(u):
     '''Computes the inner product of a (substr -> freq) mapping with itself.'''
     return sum(freq * freq for freq in u.values())
 
-def keys_by_substring_cosine_similarity(table, pattern_key):
+def keys_with_substring_cosine_similarity(keys, pattern_key):
     '''Get all keys, sorted so keys more similar to pattern_key appear first.'''
     # This implementation precomputes squares, not norms, for better precision.
-    vectors = {key: substring_frequency_vector(key) for key in table}
+    vectors = {key: substring_frequency_vector(key) for key in keys}
     squares = {key: square(v) for key, v in vectors.items()}
     pattern_vector = substring_frequency_vector(pattern_key)
     pattern_square = square(pattern_vector)
@@ -95,31 +106,35 @@ def keys_by_substring_cosine_similarity(table, pattern_key):
         return (inner_product(vectors[key], pattern_vector)
                     / math.sqrt(squares[key] * pattern_square))
     
+    guesses = [Guess(key, pattern_similarity(key)) for key in keys]
+    guesses.sort(key=lambda guess: (-guess.similarity, guess.key))
+
     if COSINE_SIMILARITY_DEBUG_TRIGGER in os.environ:
         print('The environment variable %s is defined. The following'
                 % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
         print('is a table of cosine similarities between the pattern key'
               ' and EACH repo key:', file=sys.stderr)
-        
-        for pair in sorted((pattern_similarity(key), key) for key in table):
-            print('\t%.6f\t%s' % (pair[0], pair[1]), file=sys.stderr)
-        
+        for key, similarity in guesses:
+            print('\t%.6f\t%s' % (similarity, key), file=sys.stderr)
         print(file=sys.stderr)
     
-    return sorted(table, key=pattern_similarity, reverse=True)
+    return guesses
 
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
 
 # We need this even if pattern is an exact match, to warn about other variants.
 table = all_repos_case_variants()
-key = pattern.casefold()
-assert key, 'case-folding a non-empty string should give a non-empty string'
+pattern_key = pattern.casefold()
+assert pattern_key, 'case-folding a non-empty string should be non-empty'
+
+def table_row(key):
+    row = sorted(table[pattern_key])
+    assert row, "empty rows shouldn't have been made in the first place"
+    return row
 
 try:
-    row = sorted(table[key])
-    assert row, "empty rows shouldn't have been made in the first place"
-
+    row = table_row(pattern_key)
     if pattern in row:
         # We have an exact match.
         show_url(pattern)
@@ -148,8 +163,7 @@ try:
         # We have no exact match. There are multiple case-insensitive matches.
         print('I have no "%s" repo. Maybe you want one of these...' % pattern)
         print()
-        for repo in row:
-            print('\t%s' % repo)
+        show_repos(row)
         print()
         print('Those repos are like what you requested,'
               ' but with different capitalization.')
@@ -157,5 +171,28 @@ try:
               ' they may have weird Unicode characters.')
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
-    print('%s: warning: substring cosine similarity not implemented'
-            % sys.argv[0], file=sys.stderr)
+    guesses = keys_with_substring_cosine_similarity(table.keys(), pattern_key)
+    if not guesses:
+        print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
+        exit(0)
+    
+    print('I have no "%s" repo. These repos have vaguely similar names...')
+    print()
+
+    remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
+    prev_similarity = -float('inf')
+
+    for key, similarity in guesses:
+        assert similarity <= prev_similarity, \
+               'more similar guesses should appear before less similar guesses'
+        
+        if remaining <= 0:
+            if similarity + COSINE_SIMILARITY_EPSILON < prev_similarity:
+                break
+        
+        prev_similarity = similarity
+        row = table_row(key)
+        remaining -= len(row)
+        show_repos(row)
+    
+    print()

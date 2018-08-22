@@ -86,8 +86,10 @@ try:
         for repo in row:
             print('\t%s' % repo)
         print()
-        print('Those repos are like what you requested, but with different capitalization.')
-        print('If any of those look EXACTLY the same, they may have weird Unicode characters.')
+        print('Those repos are like what you requested,'
+              ' but with different capitalization.')
+        print('If any of those look EXACTLY the same,'
+              ' they may have weird Unicode characters.')
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
     print('%s: warning: substring cosine similarity not implemented',

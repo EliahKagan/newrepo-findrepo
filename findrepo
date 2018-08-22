@@ -1,10 +1,95 @@
 #!/usr/bin/env python3
 
+import collections
 import glob
 import os
 import sys
 
 GIT_SUFFIX = '.git'
 
-os.chdir('/repos')
-print(glob.glob('*' + GIT_SUFFIX))
+def usage():
+    '''Prints a usage message and exits.'''
+    print('Usage:  %s <repo>' % sys.argv[0])
+    sys.exit(1)
+
+def trim_suffix(path):
+    '''Assumes path ends in ".git" and removes it.'''
+    assert path.endswith(GIT_SUFFIX)
+    return path[:-4]
+
+def get_pattern():
+    '''Interprets the command-line argument as the name of a possible repo.'''
+    if len(sys.argv) != 2:
+        usage()
+    arg = sys.argv[1]
+    if '/' in arg:
+        usage()
+    return trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
+
+def all_repos():
+    '''Gets the names of all repos.'''
+    os.chdir('/repos')
+    return map(trim_suffix, glob.glob('*' + GIT_SUFFIX))
+
+def all_repos_case_variants():
+    '''Gets the names of all repos and groups them by case-equivalence.'''
+    case_variants = defaultdict(list)
+    for repo in all_repos():
+        case_variants[repo.casefold()].append(repo)
+    return case_variants
+
+def show_url(repo):
+    '''Displays the repo URL in a manner similar to the output of newrepo.'''
+    print()
+    print('The URL for the repository "%s" is:' % repo)
+    print()
+    print('\tssh://team-roach.ddns.net/repos/%s%s' % (repo, GIT_SUFFIX))
+    print()
+
+# Get the pattern now so we fail fast on syntax errors.
+pattern = get_pattern()
+
+# We need this even if pattern is an exact match, to warn about other variants.
+table = all_repos_case_variants()
+
+try:
+    row = table[pattern.casefold()]
+    assert row, "empty rows shouldn't have been made in the first place"
+
+    if pattern in row:
+        # We have an exact match.
+        show_url(pattern)
+
+        if len(row) != 1:
+            # Warn the user that there are multiple case-insensitive matches.
+            if len(row) == 2:
+                print('BEWARE! Another repo is named like this'
+                      ' but capitalized differently.')
+            else:
+                print('BEWARE! %d other repos are named like this'
+                      ' but capitalized differently.' % (len(row) - 1))
+            print()
+
+            for repo in row:
+                mark = '*' if repo == pattern else ''
+                print('%7s %s' % (mark, repo))
+            print()
+    elif len(row) == 1:
+        # We have no exact match, but there is a unique case-insensitive match.
+        print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
+        show_url(row[0])
+        print("BEWARE! The filesystem on this server is case-sensitive.")
+    else:
+        # We have no exact match. There are multiple case-insensitive matches.
+        print('I have no "%s" repo. Maybe you want one of these...' % pattern)
+        print()
+        for repo in row:
+            print('\t%s' % repo)
+        print()
+        print('Those repos are like what you requested, but with different capitalization.')
+        print('If any of those look EXACTLY the same, they may have weird Unicode characters.')
+        print()
+except KeyError:
+    # We don't even have a case-insensitive match. Suggest guesses to the user.
+    print('%s: warning: substring cosine similarity not implemented',
+          file=sys.stderr)

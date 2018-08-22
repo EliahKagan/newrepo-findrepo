@@ -1,10 +1,32 @@
 #!/usr/bin/env python3
 
+import collections
 import glob
+import math
 import os
 import sys
 
+# The extension that is expected, stripped from, and restored to repo pathnames.
 GIT_SUFFIX = '.git'
+
+# This environment variable makes us print all cosine similarities. (See below.)
+COSINE_SIMILARITY_DEBUG_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
+
+# When no repo matches the user's pattern, even case-insensitively, we guess
+# based on cosine similarity of multisets of proper substrings. We will show
+# at least this many guesses unless it is more than the number of known repos.
+# However, we may show more, if it would be confusing not to (see below).
+COSINE_SIMILARITY_SUGGESTION_COUNT = 3
+
+# In accordance with the principle of least astonishment, if a guessed repo is
+# listed, all repos that match at least as well are listed too. It feels like
+# we should also print repo names that match slightly less well, such that the
+# difference in strength is almost surely irrelevant. However, since this
+# probably should not be done transitively, it might be worse. To experiment,
+# increase this constant to some strictly positive, but still small, value.
+# Also, you might want matches that are believed to be fairly bad, for debugging
+# purposes. For that, increase this to some even bigger positive value.
+COSINE_SIMILARITY_EPSILON = 0.0
 
 def usage():
     '''Prints a usage message and exits.'''
@@ -21,14 +43,14 @@ def get_pattern():
     if len(sys.argv) != 2:
         usage()
     arg = sys.argv[1]
-    if '/' in arg:
+    if '/' in arg or not arg: # we want a valid directory name (or its basename)
         usage()
     return trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
 
 def all_repos():
     '''Gets the names of all repos.'''
     os.chdir('/repos')
-    return map(trim_suffix, glob.iglob('*' + GIT_SUFFIX))
+    return map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX))
 
 def all_repos_case_variants():
     '''Gets the names of all repos and groups them by case-equivalence.'''
@@ -48,14 +70,54 @@ def show_url(repo):
     print('\tssh://team-roach.ddns.net/repos/%s%s' % (repo, GIT_SUFFIX))
     print()
 
+def substring_frequency_vector(key):
+    '''Computes (substring -> frequency) mappings. Returns them as a Counter.'''
+    return collections.Counter(key[i:j] for j in range(len(key))
+                                        for i in range(j))
+
+def inner_product(u, v):
+    '''Computes the dot product of two (substr -> freq) mappings.'''
+    return sum(freq * v[key] for key, freq in u)
+
+def square(u):
+    '''Computes the inner product of a (substr -> freq) mapping with itself.'''
+    return sum(freq * freq for freq in u.values())
+
+def keys_by_substring_cosine_similarity(table, pattern_key):
+    '''Get all keys, sorted so keys more similar to pattern_key appear first.'''
+    # This implementation precomputes squares, not norms, for better precision.
+    vectors = {key: substring_frequency_vector(key) for key in table}
+    squares = {key: square(v) for key, v in vectors.items()}
+    pattern_vector = substring_frequency_vector(pattern_key)
+    pattern_square = square(pattern_vector)
+
+    def pattern_similarity(key):
+        return (inner_product(vectors[key], pattern_vector)
+                    / math.sqrt(squares[key] * pattern_square))
+    
+    if COSINE_SIMILARITY_DEBUG_TRIGGER in os.environ:
+        print('The environment variable %s is defined. The following'
+                % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
+        print('is a table of cosine similarities between the pattern key'
+              ' and EACH repo key:', file=sys.stderr)
+        
+        for pair in sorted((pattern_similarity(key), key) for key in table):
+            print('\t%.6f\t%s' % (pair[0], pair[1]), file=sys.stderr)
+        
+        print(file=sys.stderr)
+    
+    return sorted(table, key=pattern_similarity, reverse=True)
+
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
 
 # We need this even if pattern is an exact match, to warn about other variants.
 table = all_repos_case_variants()
+key = pattern.casefold()
+assert(key, 'case-folding a non-empty string should give a non-empty string')
 
 try:
-    row = sorted(table[pattern.casefold()])
+    row = sorted(table[key])
     assert row, "empty rows shouldn't have been made in the first place"
 
     if pattern in row:

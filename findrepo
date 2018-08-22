@@ -79,7 +79,6 @@ try:
         print()
         show_url(row[0])
         print("BEWARE! The filesystem on this server is case-sensitive.")
-        print()
     else:
         # We have no exact match. There are multiple case-insensitive matches.
         print('I have no "%s" repo. Maybe you want one of these...' % pattern)
@@ -89,7 +88,6 @@ try:
         print()
         print('Those repos are like what you requested, but with different capitalization.')
         print('If any of those look EXACTLY the same, they may have weird Unicode characters.')
-        print()
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
     print('%s: warning: substring cosine similarity not implemented',

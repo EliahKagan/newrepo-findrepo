@@ -1,5 +1,5 @@
 #!/bin/sh
-# This utility run on the server, where it creates a new repo. Usage:
+# This utility runs on the server, where it creates a new repo. Usage:
 #    newrepo NAME
 
 if [ -z "$1" ]; then

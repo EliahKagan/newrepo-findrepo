@@ -95,5 +95,5 @@ try:
               ' they may have weird Unicode characters.')
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
-    print('%s: warning: substring cosine similarity not implemented',
-          file=sys.stderr)
+    print('%s: warning: substring cosine similarity not implemented'
+            % sys.argv[0], file=sys.stderr)

@@ -77,7 +77,7 @@ def show_url(repo):
     print()
 
 def show_repos(row):
-    '''Prints all repo names in row.'''
+    '''Prints all repo names from row.'''
     for repo in row:
         print('\t%s' % repo)
 

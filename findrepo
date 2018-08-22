@@ -125,13 +125,15 @@ pattern = get_pattern()
 
 # We need this even if pattern is an exact match, to warn about other variants.
 table = all_repos_case_variants()
-pattern_key = pattern.casefold()
-assert pattern_key, 'case-folding a non-empty string should be non-empty'
-
 def table_row(key):
-    row = sorted(table[pattern_key])
+    '''Retrieve and return a sorted copy of a row in the table.'''
+    # TODO: No need to make a copy.
+    row = sorted(table[key])
     assert row, "empty rows shouldn't have been made in the first place"
     return row
+
+pattern_key = pattern.casefold()
+assert pattern_key, 'case-folding a non-empty string should be non-empty'
 
 try:
     row = table_row(pattern_key)

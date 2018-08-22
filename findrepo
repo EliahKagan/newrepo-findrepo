@@ -88,7 +88,7 @@ def substring_frequency_vector(key):
 
 def inner_product(u, v):
     '''Computes the dot product of two (substr -> freq) mappings.'''
-    return sum(freq * v[key] for key, freq in u)
+    return sum(freq * v[substr] for substr, freq in u.items())
 
 def square(u):
     '''Computes the inner product of a (substr -> freq) mapping with itself.'''

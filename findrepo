@@ -176,7 +176,8 @@ except KeyError:
         print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
         exit(0)
     
-    print('I have no "%s" repo. These repos have vaguely similar names...')
+    print('I have no "%s" repo. These repos have vaguely similar names...'
+            % pattern)
     print()
 
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT

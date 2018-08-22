@@ -114,7 +114,7 @@ pattern = get_pattern()
 # We need this even if pattern is an exact match, to warn about other variants.
 table = all_repos_case_variants()
 key = pattern.casefold()
-assert(key, 'case-folding a non-empty string should give a non-empty string')
+assert key, 'case-folding a non-empty string should give a non-empty string'
 
 try:
     row = sorted(table[key])

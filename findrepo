@@ -33,7 +33,7 @@ def all_repos():
 
 def all_repos_case_variants():
     '''Gets the names of all repos and groups them by case-equivalence.'''
-    case_variants = defaultdict(list)
+    case_variants = collections.defaultdict(list)
     for repo in all_repos():
         case_variants[repo.casefold()].append(repo)
     return case_variants

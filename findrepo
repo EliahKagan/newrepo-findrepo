@@ -185,7 +185,7 @@ except KeyError:
     prev_similarity = guesses[0].similarity
     if prev_similarity < COSINE_SIMILARITY_CUTOFF:
         print('I have no "%s" repo, nor any named even vaguely like it.'
-                % pattern
+                % pattern)
         exit(0)
     
     print('I have no "%s" repo. These repos have vaguely similar names...'

@@ -55,7 +55,7 @@ pattern = get_pattern()
 table = all_repos_case_variants()
 
 try:
-    row = table[pattern.casefold()]
+    row = sorted(table[pattern.casefold()])
     assert row, "empty rows shouldn't have been made in the first place"
 
     if pattern in row:
@@ -86,7 +86,7 @@ try:
         # We have no exact match. There are multiple case-insensitive matches.
         print('I have no "%s" repo. Maybe you want one of these...' % pattern)
         print()
-        for repo in sorted(row):
+        for repo in row:
             print('\t%s' % repo)
         print()
         print('Those repos are like what you requested,'

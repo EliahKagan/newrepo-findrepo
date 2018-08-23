@@ -73,6 +73,7 @@ class LazyRowSorter:
 
 
 Guess = collections.namedtuple('Guess', ('key', 'similarity'))
+
 Guess.__doc__ = '''
 A case-folded repo name and its cosine similarity
 to some case-folded user-provided pattern.

@@ -205,7 +205,7 @@ except KeyError:
     for key, similarity in guesses:
         delta = prev_similarity - similarity
         assert delta >= 0.0, 'guesses must be sorted from more to less similar'
-        if ((remaining <= 0.0 and delta > COSINE_SIMILARITY_EPSILON)
+        if ((remaining <= 0 and delta > COSINE_SIMILARITY_EPSILON)
                 or similarity < COSINE_SIMILARITY_CUTOFF):
             break
         

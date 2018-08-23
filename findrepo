@@ -94,7 +94,7 @@ user-provided pattern.
 
 def usage():
     '''Prints a usage message and exits.'''
-    print('Usage:  %s <repo>' % sys.argv[0], file=sys.stderr)
+    print('Usage:  %s NAME' % sys.argv[0], file=sys.stderr)
     sys.exit(1)
 
 

@@ -148,7 +148,7 @@ def show_unique_casefold(pattern, row):
     print("BEWARE! The filesystem on this server is case-sensitive.")
 
 def show_multiple_casefolds(pattern, row):
-    '''Assumes no exact match andd two or more casefolds. Shows them all.'''
+    '''Assumes no exact match and two or more casefolds. Shows them all.'''
     print('I have no "%s" repo. Maybe you want one of these...' % pattern)
     print()
     show_repos(row)

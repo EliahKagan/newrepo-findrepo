@@ -300,37 +300,49 @@ def suggest_guesses(guesses, table):
         show_repos(row)
 
 
-# Get the pattern now so we fail fast on syntax errors.
-pattern = get_pattern()
+def find_repo(table, pattern, pattern_key):
+    '''Find the repo and show its URL, or give the user helpful suggestions.'''
+    try:
+        row = table[pattern_key]
 
-# Retrieve the repos. Stop if there weren't any, which we consider an error.
-repos = all_repos()
-if not repos:
-    print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
-    exit(1)
+        # We at least have a case-insensitive match.
+        if pattern in row:
+            show_exact_match(pattern, row)
+        elif len(row) == 1:
+            show_unique_casefold(pattern, row)
+        else:
+            show_multiple_casefolds(pattern, row)
+    except KeyError:
+        # We don't even have a case-insensitive match.
+        guesses = plausible_guesses(table.keys(), pattern_key)
 
-# We need this even if pattern is an exact match, to warn about other variants.
-table = group_by_casefold(repos)
-pattern_key = pattern.casefold()
-assert pattern_key, "case folding shouldn't make a non-empty string empty"
+        announce_guesses(guesses, table, pattern)
 
-try:
-    row = table[pattern_key]
+        if guesses:
+            print()
+            suggest_guesses(guesses, table)
+            print()
 
-    # We at least have a case-insensitive match.
-    if pattern in row:
-        show_exact_match(pattern, row)
-    elif len(row) == 1:
-        show_unique_casefold(pattern, row)
-    else:
-        show_multiple_casefolds(pattern, row)
-except KeyError:
-    # We don't even have a case-insensitive match.
-    guesses = plausible_guesses(table.keys(), pattern_key)
 
-    announce_guesses(guesses, table, pattern)
+def run():
+    '''Retrieves repo names and looks for one resembling the user's request.'''
+    # Get the pattern now so we fail fast on syntax errors.
+    pattern = get_pattern()
 
-    if guesses:
-        print()
-        suggest_guesses(guesses, table)
-        print()
+    # Retrieve the repos. Stop if there are none, which we consider an error.
+    repos = all_repos()
+    if not repos:
+        print('I have no "%s" repo. In fact, I have no repos at all!'
+            % pattern)
+        exit(1)
+
+    # We need this even for an exact match, to warn about case variants.
+    table = group_by_casefold(repos)
+    pattern_key = pattern.casefold()
+    assert pattern_key, "case folding shouldn't make a non-empty string empty"
+
+    # We are ready to match repo names to the user's pattern.
+    find_repo(table, pattern, pattern_key)
+
+if __name__ == '__main__':
+    run()

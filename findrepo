@@ -45,11 +45,11 @@ class LazyRowSorter:
         '''Creates a LazyRowSorter that doesn't have any rows yet.'''
         # Not a defaultdict. Nonexistent row *retrieval* should raise KeyError.
         self._rows = {}
-    
+
     def __bool__(self):
         '''Indicates if the table is nonempty (i.e., has one or more rows).'''
         return bool(self._rows)
-    
+
     def __getitem__(self, key):
         '''Sorts and returns the row for key. Raises KeyError on failure.'''
         # The expected use is to retrieve a row 0, 1, or occasionally 2 times.
@@ -58,14 +58,14 @@ class LazyRowSorter:
         assert row, "empty rows shouldn't have been made in the first place"
         row.sort()
         return row
-    
+
     def put(self, key, item):
         '''Adds item to the for for key. Creates the row if there isn't one.'''
         try:
             self._rows[key].append(item)
         except KeyError:
             self._rows[key] = [item]
-    
+
     def keys(self):
         '''Provides a view of the keys to each row.'''
         return self._rows.keys()
@@ -201,7 +201,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     def pattern_similarity(key):
         return (inner_product(vectors[key], pattern_vector)
                     / math.sqrt(squares[key] * pattern_square))
-    
+
     guesses = [Guess(key, pattern_similarity(key)) for key in keys]
     guesses.sort(key=lambda guess: (-guess.similarity, guess.key))
     debug_guesses(guesses)
@@ -255,7 +255,7 @@ except KeyError:
         print('I have no "%s" repo, nor any named even vaguely like it.'
                 % pattern)
         exit(0) # But even this situation is *not* considered an error.
-    
+
     if len(guesses) == 1 and len(table[guesses[0].key]) == 1:
         print('I have no "%s" repo. This repo has a vaguely similar name...'
                 % pattern)
@@ -272,10 +272,10 @@ except KeyError:
         assert delta >= 0.0, 'guesses must be sorted from more to less similar'
         if remaining <= 0 and delta > COSINE_SIMILARITY_EPSILON:
             break
-        
+
         prev_similarity = similarity
         row = table[key]
         remaining -= len(row)
         show_repos(row)
-    
+
     print()

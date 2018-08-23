@@ -38,6 +38,29 @@ assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0
 assert COSINE_SIMILARITY_CUTOFF > 0.0
 assert COSINE_SIMILARITY_EPSILON >= 0.0
 
+class LazyRowSorter:
+    '''An associative table that sorts its rows when they are accessed.'''
+    def __init__(self):
+        '''Creates a LazyRowSorter that doesn't have any rows yet.'''
+        # Not a defaultdict. Nonexistent row *retrieval* should raise KeyError.
+        self._rows = {}
+    
+    def __getitem__(self, key):
+        '''Sorts and returns the row for key. Raises KeyError on failure.'''
+        # The expected use case is to retrieve each rows just once. Even if rows
+        # are retrieved repeatedly, Timsort is very fast with presorted data.
+        row = self._rows[key]
+        assert row, "empty rows shouldn't have been made in the first place"
+        row.sort()
+        return row
+    
+    def put(self, key, item):
+        '''Adds item to the for for key. Creates the row if there isn't one.'''
+        try:
+            self._rows[key].append(item)
+        except KeyError:
+            self._rows[key] = [item]
+
 Guess = collections.namedtuple('Guess', ('key', 'similarity'))
 
 def usage():

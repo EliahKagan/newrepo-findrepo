@@ -242,6 +242,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     pattern_square = square(pattern_vector)
 
     def pattern_similarity(key):
+        '''Computes a repo key vector's similarity to the pattern vector.'''
         return (inner_product(vectors[key], pattern_vector)
                 / math.sqrt(squares[key] * pattern_square))
 

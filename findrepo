@@ -47,6 +47,8 @@ assert COSINE_SIMILARITY_EPSILON >= 0.0
 
 class LazyRowSorter:
     '''An associative table that sorts its rows when they are accessed.'''
+    __slots__ = '_rows',
+
     def __init__(self):
         '''Creates a LazyRowSorter that doesn't have any rows yet.'''
         # Not a defaultdict. Nonexistent row *retrieval* should raise KeyError.

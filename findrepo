@@ -31,7 +31,7 @@ COSINE_SIMILARITY_CUTOFF = 0.1
 # that we are doing this transitively. To experiment, change this constant to
 # some slightly greater (or perhaps smaller, but still strictly positive) value.
 # Also, you might want matches that are believed to be fairly bad, for debugging
-# purposes. For that, increase this to some even bigger positive value.
+# purposes. For that, increase this to some still bigger positive value.
 COSINE_SIMILARITY_EPSILON = 0.0001
 
 assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0

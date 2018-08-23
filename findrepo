@@ -212,7 +212,7 @@ def plausible_guesses(keys, pattern_key):
     # Computing subsring cosine similarities is the asymptotically slowest step
     # and COSINE_SIMILARITY_CUTOFF is small. If we pruned guesses before
     # sorting when we didn't have COSINE_SIMILARITY_DEBUG_TRIGGER but after
-    # when we did, the program would be more complicated and error-prone with
+    # when we did, the program would be more complicated and bug-prone with
     # only a small improvement in peformance. For the same reason, I haven't
     # written a binary search, or made Guess a fully-fledged class with __lt__
     # to use the bisect module (note also that such a class would likely need

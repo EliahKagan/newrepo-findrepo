@@ -196,12 +196,11 @@ except KeyError:
 
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
     for key, similarity in guesses:
-        assert similarity <= prev_similarity, \
-               'more similar guesses should appear before less similar guesses'
-        
-        if remaining <= 0:
-            if similarity + COSINE_SIMILARITY_EPSILON < prev_similarity:
-                break
+        delta = prev_similarity - similarity
+        assert delta > 0, 'more similar guesses must precede less similar ones'
+        if ((remaining <= 0 and delta > COSINE_SIMILARITY_EPSILON)
+                or similarity < COSINE_SIMILARITY_CUTOFF):
+            break
         
         prev_similarity = similarity
         row = table_row(key)

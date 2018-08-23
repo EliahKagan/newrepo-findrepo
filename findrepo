@@ -159,7 +159,7 @@ def show_multiple_casefolds(pattern, row):
             ' they may have weird Unicode characters.')
 
 def substring_frequency_vector(key):
-    '''Computes (substring -> frequency) mappings. Returns them as a Counter.'''
+    '''Computes (substring -> frequency) mappings, represented as a Counter.'''
     return collections.Counter(key[start:stop] for stop in range(len(key) + 1)
                                                for start in range(stop))
 
@@ -189,8 +189,8 @@ def debug_guesses(guesses):
 
 def keys_with_substring_cosine_similarity(keys, pattern_key):
     '''
-    Gets all keys, in descending order of similarity to pattern_key. In cases of
-    equal similarity, the tie is broken lexicographically by key text.
+    Gets all keys, in descending order of similarity to pattern_key. In cases
+    of equal similarity, the tie is broken lexicographically by key text.
     '''
     # This implementation precomputes squares, not norms, for better precision.
     vectors = {key: substring_frequency_vector(key) for key in keys}
@@ -209,9 +209,9 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
 
 def plausible_guesses(keys, pattern_key):
     '''Gets all guesses that seem good enough to possibly show the user.'''
-    # Computing subsring cosine similarities is the asymptotically slowest step,
-    # and COSINE_SIMILARITY_CUTOFF is small. If we pruned guesses before sorting
-    # them when we didn't have COSINE_SIMILARITY_DEBUG_TRIGGER but afterwards
+    # Computing subsring cosine similarities is the asymptotically slowest step
+    # and COSINE_SIMILARITY_CUTOFF is small. If we pruned guesses before
+    # sorting when we didn't have COSINE_SIMILARITY_DEBUG_TRIGGER but after
     # when we did, the program would be more complicated and error-prone with
     # only a small improvement in peformance. For the same reason, I haven't
     # written a binary search, or made Guess a fully-fledged class with __lt__

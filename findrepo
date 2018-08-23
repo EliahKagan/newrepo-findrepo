@@ -66,8 +66,10 @@ class LazyRowSorter:
         return self._rows.keys()
 
 Guess = collections.namedtuple('Guess', ('key', 'similarity'))
-Guess.__doc__ = \
-        "Case-folded repo name and its cosine similarity to the user's pattern."
+Guess.__doc__ = '''\
+A case-folded repo name and its cosine similarity
+to some case-folded user-provided pattern.
+'''
 
 def usage():
     '''Prints a usage message and exits.'''

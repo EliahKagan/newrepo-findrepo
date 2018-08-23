@@ -77,7 +77,7 @@ def usage():
 def trim_suffix(path):
     '''Assumes path ends in ".git" and removes it.'''
     assert path.endswith(GIT_SUFFIX)
-    return path[:-4]
+    return path[:-len(GIT_SUFFIX)]
 
 def get_pattern():
     '''Interprets the command-line argument as the name of a possible repo.'''

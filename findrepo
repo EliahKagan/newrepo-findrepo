@@ -129,7 +129,7 @@ def square(u):
     return sum(freq * freq for freq in u.values())
 
 def debug_guesses(guesses):
-    '''Print all cosine similarities if the trigger to do so is defined.'''
+    '''Prints all cosine similarities if the trigger to do so is defined.'''
     if COSINE_SIMILARITY_DEBUG_TRIGGER in os.environ:
         print('The environment variable %s is defined. The following'
                 % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
@@ -140,7 +140,10 @@ def debug_guesses(guesses):
         print(file=sys.stderr)
 
 def keys_with_substring_cosine_similarity(keys, pattern_key):
-    '''Get all keys, sorted so keys more similar to pattern_key appear first.'''
+    '''
+    Gets all keys, in descending order of similarity to pattern_key. In cases of
+    equal similarity, the tie is broken lexicographically by key text.
+    '''
     # This implementation precomputes squares, not norms, for better precision.
     vectors = {key: substring_frequency_vector(key) for key in keys}
     squares = {key: square(v) for key, v in vectors.items()}

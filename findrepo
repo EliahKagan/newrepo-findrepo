@@ -45,6 +45,10 @@ class LazyRowSorter:
         # Not a defaultdict. Nonexistent row *retrieval* should raise KeyError.
         self._rows = {}
     
+    def __bool__(self):
+        '''Indicates if the table is nonempty (i.e., has one or more rows).'''
+        return bool(self._rows)
+    
     def __getitem__(self, key):
         '''Sorts and returns the row for key. Raises KeyError on failure.'''
         # The expected use case is to retrieve each rows just once. Even if rows
@@ -95,11 +99,11 @@ def all_repos():
     os.chdir('/repos')
     return map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX))
 
-def all_repos_case_variants():
-    '''Gets the names of all repos and groups them by case-equivalence.'''
+def group_by_casefold(names):
+    '''Groups names by case-folding equivalence.'''
     table = LazyRowSorter()
-    for repo in all_repos():
-        table.put(repo.casefold(), repo)
+    for name in names:
+        table.put(name.casefold(), name)
     return table
 
 def show_url(repo):
@@ -202,11 +206,21 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     debug_guesses(guesses)
     return guesses
 
+# TODO: implement this and extract code to it
+#def plausible_guesses(keys, pattern_key):
+#    '''Gets all guesses that seem good enough to possibly show the user.'''
+
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
 
+# Retrieve the repos and stop if there weren't any. This is considered an error.
+repos = all_repos()
+if not repos:
+    print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
+    exit(1)
+
 # We need this even if pattern is an exact match, to warn about other variants.
-table = all_repos_case_variants()
+table = group_by_casefold(repos)
 pattern_key = pattern.casefold()
 assert pattern_key, "case folding shouldn't make a non-empty string empty"
 
@@ -223,10 +237,7 @@ try:
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
     guesses = keys_with_substring_cosine_similarity(table.keys(), pattern_key)
-    if not guesses:
-        print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
-        exit(0)
-    
+
     prev_similarity = guesses[0].similarity
     if prev_similarity < COSINE_SIMILARITY_CUTOFF:
         print('I have no "%s" repo, nor any named even vaguely like it.'

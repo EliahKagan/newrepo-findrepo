@@ -7,6 +7,12 @@ import math
 import os
 import sys
 
+# The directory on the server where repos are kept.
+REPO_DIR = '/repos'
+
+# The typical URL for a repo, up to but not including the repo name itself.
+URL_PREFIX = 'ssh://team-roach.ddns.net/repos/'
+
 # The extension that's expected, stripped from, and restored to repo pathnames.
 GIT_SUFFIX = '.git'
 
@@ -87,7 +93,7 @@ def usage():
 
 def trim_suffix(path):
     '''Assumes path ends in ".git" and removes it.'''
-    assert path.endswith(GIT_SUFFIX)
+    assert path.endswith(GIT_SUFFIX), 'the suffix to be trimmed is not present'
     return path[:-len(GIT_SUFFIX)]
 
 
@@ -103,7 +109,7 @@ def get_pattern():
 
 def all_repos():
     '''Gets the names of all repos.'''
-    os.chdir('/repos')
+    os.chdir(REPO_DIR)
     return map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX))
 
 
@@ -119,7 +125,7 @@ def show_url(repo):
     '''Displays the repo URL in a manner similar to the output of newrepo.'''
     print('The URL for the repository "%s" is:' % repo)
     print()
-    print('\tssh://team-roach.ddns.net/repos/%s%s' % (repo, GIT_SUFFIX))
+    print('\t%s%s%s' % (URL_PREFIX, repo, GIT_SUFFIX))
     print()
 
 

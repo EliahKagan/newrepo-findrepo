@@ -197,7 +197,7 @@ def _inner_product(u, v):  # pylint: disable=invalid-name
     return sum(freq * v[substr] for substr, freq in u.items())
 
 
-def inner_product(u, v):
+def inner_product(u, v):  # pylint: disable=invalid-name
     '''Computes the dot product of two (substr -> freq) mappings.'''
     # Iterate through the vector with smaller support, to save time.
     return _inner_product(v, u) if len(v) < len(u) else _inner_product(u, v)

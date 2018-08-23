@@ -253,6 +253,7 @@ def plausible_guesses(keys, pattern_key):
 
     return guesses
 
+
 def announce_guesses(guesses, table, pattern):
     '''Prints a heading explaining if guesses are about to be suggested.'''
     situation = 'I have no "%s" repo' % pattern
@@ -262,6 +263,7 @@ def announce_guesses(guesses, table, pattern):
         print('%s. This repo has a vaguely similar name...' % situation)
     else:
         print('%s. These repos have vaguely similar names...' % situation)
+
 
 def suggest_guesses(guesses, table):
     '''Suggests guesses to the user.'''

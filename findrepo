@@ -333,7 +333,7 @@ def run():
     repos = all_repos()
     if not repos:
         print('I have no "%s" repo. In fact, I have no repos at all!'
-            % pattern)
+              % pattern)
         exit(1)
 
     # We need this even for an exact match, to warn about case variants.

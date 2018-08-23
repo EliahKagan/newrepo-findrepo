@@ -246,6 +246,32 @@ def plausible_guesses(keys, pattern_key):
                     lambda guess: guess.similarity >= COSINE_SIMILARITY_CUTOFF,
                     keys_with_substring_cosine_similarity(keys, pattern_key)))
 
+def announce_guesses(guesses, table, pattern):
+    '''Prints a heading explaining if guesses are about to be suggested.'''
+    situation = 'I have no "%s" repo' % pattern
+    if not guesses:
+        print('%s, nor any named even vaguely like it.' % pattern)
+    elif len(guesses) == 1 and len(table[guesses[0].key]) == 1:
+        print('%s. This repo has a vaguely similar name...' % situation)
+    else:
+        print('%s. These repos have vaguely similar names...' % situation)
+
+def suggest_guesses(guesses, table):
+    '''Suggests guesses to the user.'''
+    prev_similarity = float('inf')  # Becuase Python 3.4 doesn't have math.inf.
+    remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
+
+    for key, similarity in guesses:
+        delta = prev_similarity - similarity
+        assert delta >= 0.0, 'guesses must be sorted from more to less similar'
+        if remaining <= 0 and delta > COSINE_SIMILARITY_EPSILON:
+            break
+
+        prev_similarity = similarity
+        row = table[key]
+        remaining -= len(row)
+        show_repos(row)
+
 
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
@@ -272,33 +298,12 @@ try:
     else:
         show_multiple_casefolds(pattern, row)
 except KeyError:
-    # We don't even have a case-insensitive match. Suggest guesses to the user.
+    # We don't even have a case-insensitive match.
     guesses = plausible_guesses(table.keys(), pattern_key)
-    if not guesses:
-        print('I have no "%s" repo, nor any named even vaguely like it.'
-              % pattern)
-        exit(0)  # But even this situation is *not* considered an error.
 
-    if len(guesses) == 1 and len(table[guesses[0].key]) == 1:
-        print('I have no "%s" repo. This repo has a vaguely similar name...'
-              % pattern)
-    else:
-        print('I have no "%s" repo. These repos have vaguely similar names...'
-              % pattern)
-    print()
+    announce_guesses(guesses, table, pattern)
 
-    prev_similarity = float('inf')  # Becuase Python 3.4 doesn't have math.inf.
-    remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
-
-    for key, similarity in guesses:
-        delta = prev_similarity - similarity
-        assert delta >= 0.0, 'guesses must be sorted from more to less similar'
-        if remaining <= 0 and delta > COSINE_SIMILARITY_EPSILON:
-            break
-
-        prev_similarity = similarity
-        row = table[key]
-        remaining -= len(row)
-        show_repos(row)
-
-    print()
+    if guesses:
+        print()
+        suggest_guesses()
+        print()

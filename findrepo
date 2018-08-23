@@ -150,7 +150,7 @@ def show_exact_match(pattern, row):
 
     if len(row) != 1:
         # Warn the user that there are multiple case-insensitive matches.
-        situation = 'named like this by capitalized differently'
+        situation = 'named like this but capitalized differently'
         if len(row) == 2:
             print('BEWARE! Another repo is %s.' % situation)
         else:

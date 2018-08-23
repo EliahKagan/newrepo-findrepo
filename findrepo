@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+'''
+This utility runs on the server, where it reports the URL clients should use to
+clone an existing repo or to add it as a remote. If the repo is not found,
+it makes suggestions to the user about which existing repo they might intend.
+'''
 
 import collections
 import contextlib

@@ -112,6 +112,45 @@ def show_repos(row):
     for repo in row:
         print('\t%s' % repo)
 
+def show_repos_with_match_mark(row, pattern):
+    '''Prints all repo names from row, indicating which matches the pattern.'''
+    for repo in row:
+        mark = '*' if repo == pattern else ''
+        print('%7s %s' % (mark, repo))
+
+def show_exact_match(pattern, row):
+    '''Assumes an exact match, shows it, and warns about any case clashes.'''
+    show_url(pattern)
+
+    if len(row) != 1:
+        # Warn the user that there are multiple case-insensitive matches.
+        situation = 'named like this by capitalized differently'
+        if len(row) == 2:
+            print('BEWARE! Another repo is %s.' % situation)
+        else:
+            print('BEWARE! %d other repos are %s.' % (len(row) - 1, situation))
+        print()
+        show_repos_with_match_mark(row, pattern)
+        print()
+
+def show_unique_casefold(pattern, row):
+    '''Assumes a non-exact unique case-insensitive match. Shows it and warns.'''
+    print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
+    print()
+    show_url(row[0])
+    print("BEWARE! The filesystem on this server is case-sensitive.")
+
+def show_multiple_casefolds(pattern, row):
+    '''Assumes no exact match andd two or more casefolds. Shows them all.'''
+    print('I have no "%s" repo. Maybe you want one of these...' % pattern)
+    print()
+    show_repos(row)
+    print()
+    print('Those repos are like what you requested,'
+            ' but with different capitalization.')
+    print('If any of those look EXACTLY the same,'
+            ' they may have weird Unicode characters.')
+
 def substring_frequency_vector(key):
     '''Computes (substring -> frequency) mappings. Returns them as a Counter.'''
     return collections.Counter(key[start:stop] for stop in range(len(key) + 1)
@@ -171,40 +210,14 @@ assert pattern_key, "case folding shouldn't make a non-empty string empty"
 
 try:
     row = table[pattern_key]
+
+    # We at least have a case-insensitive match.
     if pattern in row:
-        # We have an exact match.
-        show_url(pattern)
-
-        if len(row) != 1:
-            # Warn the user that there are multiple case-insensitive matches.
-            if len(row) == 2:
-                print('BEWARE! Another repo is named like this'
-                      ' but capitalized differently.')
-            else:
-                print('BEWARE! %d other repos are named like this'
-                      ' but capitalized differently.' % (len(row) - 1))
-            print()
-
-            for repo in row:
-                mark = '*' if repo == pattern else ''
-                print('%7s %s' % (mark, repo))
-            print()
+        show_exact_match(pattern, row)
     elif len(row) == 1:
-        # We have no exact match, but there is a unique case-insensitive match.
-        print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
-        print()
-        show_url(row[0])
-        print("BEWARE! The filesystem on this server is case-sensitive.")
+        show_unique_casefold(pattern, row)
     else:
-        # We have no exact match. There are multiple case-insensitive matches.
-        print('I have no "%s" repo. Maybe you want one of these...' % pattern)
-        print()
-        show_repos(row)
-        print()
-        print('Those repos are like what you requested,'
-              ' but with different capitalization.')
-        print('If any of those look EXACTLY the same,'
-              ' they may have weird Unicode characters.')
+        show_multiple_casefolds(pattern, row)
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
     guesses = keys_with_substring_cosine_similarity(table.keys(), pattern_key)

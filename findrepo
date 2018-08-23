@@ -39,6 +39,7 @@ assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0
 assert COSINE_SIMILARITY_CUTOFF > 0.0
 assert COSINE_SIMILARITY_EPSILON >= 0.0
 
+
 class LazyRowSorter:
     '''An associative table that sorts its rows when they are accessed.'''
     def __init__(self):
@@ -70,35 +71,41 @@ class LazyRowSorter:
         '''Provides a view of the keys to each row.'''
         return self._rows.keys()
 
+
 Guess = collections.namedtuple('Guess', ('key', 'similarity'))
 Guess.__doc__ = '''
 A case-folded repo name and its cosine similarity
 to some case-folded user-provided pattern.
 '''
 
+
 def usage():
     '''Prints a usage message and exits.'''
     print('Usage:  %s <repo>' % sys.argv[0], file=sys.stderr)
     sys.exit(1)
+
 
 def trim_suffix(path):
     '''Assumes path ends in ".git" and removes it.'''
     assert path.endswith(GIT_SUFFIX)
     return path[:-len(GIT_SUFFIX)]
 
+
 def get_pattern():
     '''Interprets the command-line argument as the name of a possible repo.'''
     if len(sys.argv) != 2:
         usage()
     arg = sys.argv[1]
-    if '/' in arg or not arg: # we want a valid dir name (or its basename)
+    if '/' in arg or not arg:  # we want a valid dir name (or its basename)
         usage()
     return trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
+
 
 def all_repos():
     '''Gets the names of all repos.'''
     os.chdir('/repos')
     return map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX))
+
 
 def group_by_casefold(names):
     '''Groups names by case-folding equivalence.'''
@@ -107,6 +114,7 @@ def group_by_casefold(names):
         table.put(name.casefold(), name)
     return table
 
+
 def show_url(repo):
     '''Displays the repo URL in a manner similar to the output of newrepo.'''
     print('The URL for the repository "%s" is:' % repo)
@@ -114,16 +122,19 @@ def show_url(repo):
     print('\tssh://team-roach.ddns.net/repos/%s%s' % (repo, GIT_SUFFIX))
     print()
 
+
 def show_repos(row):
     '''Prints all repo names from row.'''
     for repo in row:
         print('\t%s' % repo)
+
 
 def show_repos_with_match_mark(row, pattern):
     '''Prints all repo names from row, indicating which matches the pattern.'''
     for repo in row:
         mark = '*' if repo == pattern else ''
         print('%7s %s' % (mark, repo))
+
 
 def show_exact_match(pattern, row):
     '''Assumes an exact match, shows it, and warns about any case clashes.'''
@@ -140,12 +151,14 @@ def show_exact_match(pattern, row):
         show_repos_with_match_mark(row, pattern)
         print()
 
+
 def show_unique_casefold(pattern, row):
     '''Assumes an inexact unique case-insensitive match. Shows it and warns.'''
     print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
     print()
     show_url(row[0])
     print("BEWARE! The filesystem on this server is case-sensitive.")
+
 
 def show_multiple_casefolds(pattern, row):
     '''Assumes no exact match and two or more casefolds. Shows them all.'''
@@ -158,23 +171,28 @@ def show_multiple_casefolds(pattern, row):
     print('If any of those look EXACTLY the same,'
             ' they may have weird Unicode characters.')
 
+
 def substring_frequency_vector(key):
     '''Computes (substring -> frequency) mappings, represented as a Counter.'''
     return collections.Counter(key[start:stop] for stop in range(len(key) + 1)
                                                for start in range(stop))
 
+
 def _inner_product(u, v):
     '''Does the actual work of computing the (substr -> freq) dot product.'''
     return sum(freq * v[substr] for substr, freq in u.items())
+
 
 def inner_product(u, v):
     '''Computes the dot product of two (substr -> freq) mappings.'''
     # Iterate through the vector with smaller support, to save time.
     return _inner_product(v, u) if len(v) < len(u) else _inner_product(u, v)
 
+
 def square(u):
     '''Computes the dot product of a (substr -> freq) mapping with itself.'''
     return sum(freq * freq for freq in u.values())
+
 
 def debug_guesses(guesses):
     '''Prints all cosine similarities if the trigger to do so is defined.'''
@@ -186,6 +204,7 @@ def debug_guesses(guesses):
         for key, similarity in guesses:
             print('\t%.6f\t%s' % (similarity, key), file=sys.stderr)
         print(file=sys.stderr)
+
 
 def keys_with_substring_cosine_similarity(keys, pattern_key):
     '''
@@ -207,6 +226,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     debug_guesses(guesses)
     return guesses
 
+
 def plausible_guesses(keys, pattern_key):
     '''Gets all guesses that seem good enough to possibly show the user.'''
     # Computing subsring cosine similarities is the asymptotically slowest step
@@ -223,6 +243,7 @@ def plausible_guesses(keys, pattern_key):
     return list(itertools.takewhile(
                     lambda guess: guess.similarity >= COSINE_SIMILARITY_CUTOFF,
                     keys_with_substring_cosine_similarity(keys, pattern_key)))
+
 
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
@@ -254,7 +275,7 @@ except KeyError:
     if not guesses:
         print('I have no "%s" repo, nor any named even vaguely like it.'
                 % pattern)
-        exit(0) # But even this situation is *not* considered an error.
+        exit(0)  # But even this situation is *not* considered an error.
 
     if len(guesses) == 1 and len(table[guesses[0].key]) == 1:
         print('I have no "%s" repo. This repo has a vaguely similar name...'
@@ -264,7 +285,7 @@ except KeyError:
                 % pattern)
     print()
 
-    prev_similarity = float('inf') # becuase Python 3.4 doesn't have math.inf
+    prev_similarity = float('inf')  # Becuase Python 3.4 doesn't have math.inf.
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
 
     for key, similarity in guesses:

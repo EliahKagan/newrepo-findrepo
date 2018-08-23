@@ -102,14 +102,14 @@ def get_pattern():
     if len(sys.argv) != 2:
         usage()
     arg = sys.argv[1]
-    if '/' in arg or not arg:  # we want a valid dir name (or its basename)
+    if '/' in arg or not arg:  # We want a valid dir name (or its basename).
         usage()
     return trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
 
 
 def all_repos():
     '''Gets the names of all repos.'''
-    os.chdir(REPO_DIR)
+    os.chdir(REPO_DIR)  # We never depend on the original CWD, so this is fine.
     return map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX))
 
 

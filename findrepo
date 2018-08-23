@@ -167,9 +167,9 @@ def show_multiple_casefolds(pattern, row):
     show_repos(row)
     print()
     print('Those repos are like what you requested,'
-            ' but with different capitalization.')
+          ' but with different capitalization.')
     print('If any of those look EXACTLY the same,'
-            ' they may have weird Unicode characters.')
+          ' they may have weird Unicode characters.')
 
 
 def substring_frequency_vector(key):
@@ -198,7 +198,7 @@ def debug_guesses(guesses):
     '''Prints all cosine similarities if the trigger to do so is defined.'''
     if COSINE_SIMILARITY_DEBUG_TRIGGER in os.environ:
         print('The environment variable %s is defined. The following'
-                % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
+              % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
         print('is a table of cosine similarities between the pattern key'
               ' and EACH repo key:', file=sys.stderr)
         for key, similarity in guesses:
@@ -219,7 +219,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
 
     def pattern_similarity(key):
         return (inner_product(vectors[key], pattern_vector)
-                    / math.sqrt(squares[key] * pattern_square))
+                / math.sqrt(squares[key] * pattern_square))
 
     guesses = [Guess(key, pattern_similarity(key)) for key in keys]
     guesses.sort(key=lambda guess: (-guess.similarity, guess.key))
@@ -274,15 +274,15 @@ except KeyError:
     guesses = plausible_guesses(table.keys(), pattern_key)
     if not guesses:
         print('I have no "%s" repo, nor any named even vaguely like it.'
-                % pattern)
+              % pattern)
         exit(0)  # But even this situation is *not* considered an error.
 
     if len(guesses) == 1 and len(table[guesses[0].key]) == 1:
         print('I have no "%s" repo. This repo has a vaguely similar name...'
-                % pattern)
+              % pattern)
     else:
         print('I have no "%s" repo. These repos have vaguely similar names...'
-                % pattern)
+              % pattern)
     print()
 
     prev_similarity = float('inf')  # Becuase Python 3.4 doesn't have math.inf.

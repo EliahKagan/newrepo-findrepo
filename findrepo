@@ -227,7 +227,7 @@ def plausible_guesses(keys, pattern_key):
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
 
-# Retrieve the repos and stop if there weren't any. This is considered an error.
+# Retrieve the repos. Stop if there weren't any, which we consider an error.
 repos = all_repos()
 if not repos:
     print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)

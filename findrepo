@@ -30,7 +30,7 @@ COSINE_SIMILARITY_CUTOFF = 0.1
 # we should also print repo names that match slightly less well, such that the
 # difference in strength is almost surely irrelevant. However, it might be bad
 # that we are doing this transitively. To experiment, change this constant to
-# some slightly greater (or perhaps smaller, but still strictly positive) value.
+# some slightly greater (or perhaps smaller, but still nonnegative) value.
 # Also, you might want matches that are believed to be fairly bad, for debugging
 # purposes. For that, increase this to some still bigger positive value.
 COSINE_SIMILARITY_EPSILON = 0.0001

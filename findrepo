@@ -146,7 +146,7 @@ def table_row(key):
     return row
 
 pattern_key = pattern.casefold()
-assert pattern_key, 'case-folding a non-empty string should be non-empty'
+assert pattern_key, "case folding shouldn't make a non-empty string empty"
 
 try:
     row = table_row(pattern_key)

@@ -201,6 +201,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
         return (inner_product(vectors[key], pattern_vector)
                     / math.sqrt(squares[key] * pattern_square))
     
+    # TODO: Can all checking against COSINE_SIMILARITY_CUTOFF be moved here?
     guesses = [Guess(key, pattern_similarity(key)) for key in keys]
     guesses.sort(key=lambda guess: (-guess.similarity, guess.key))
     debug_guesses(guesses)

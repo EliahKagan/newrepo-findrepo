@@ -66,7 +66,7 @@ class LazyRowSorter:
         return row
 
     def put(self, key, item):
-        '''Adds item to the for for key. Creates the row if there isn't one.'''
+        '''Adds item to the row for key. Creates the row if there isn't one.'''
         try:
             self._rows[key].append(item)
         except KeyError:

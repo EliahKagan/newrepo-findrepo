@@ -26,8 +26,8 @@ COSINE_SIMILARITY_DEBUG_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
 COSINE_SIMILARITY_SUGGESTION_COUNT = 5
 # TODO: Show more results if similarity is high, and fewer if it is low.
 
-# Repos with cosine similarity less than this value to this pattern will not be
-# shown, even if they are the closest matches.
+# Repos whose substring cosine similarity to the user-provided pattern is less
+# than this value will not be shown, even if they are the closest matches.
 COSINE_SIMILARITY_CUTOFF = 0.1
 
 # In accordance with the principle of least astonishment, if a guessed repo is

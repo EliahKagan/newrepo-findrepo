@@ -60,6 +60,10 @@ class LazyRowSorter:
             self._rows[key].append(item)
         except KeyError:
             self._rows[key] = [item]
+    
+    def keys(self):
+        '''Provides a view of the keys to each row.'''
+        return self._rows.keys()
 
 Guess = collections.namedtuple('Guess', ('key', 'similarity'))
 
@@ -89,14 +93,10 @@ def all_repos():
 
 def all_repos_case_variants():
     '''Gets the names of all repos and groups them by case-equivalence.'''
-    case_variants = {} # not using defaultdict because we want exceptions later
+    table = LazyRowSorter()
     for repo in all_repos():
-        key = repo.casefold()
-        try:
-            case_variants[key].append(repo)
-        except KeyError:
-            case_variants[key] = [repo]
-    return case_variants
+        table.put(repo.casefold(), repo)
+    return table
 
 def show_url(repo):
     '''Displays the repo URL in a manner similar to the output of newrepo.'''
@@ -164,18 +164,11 @@ pattern = get_pattern()
 
 # We need this even if pattern is an exact match, to warn about other variants.
 table = all_repos_case_variants()
-def table_row(key):
-    '''Retrieve, sort, and return a row in the table.'''
-    row = table[key]
-    assert row, "empty rows shouldn't have been made in the first place"
-    row.sort()
-    return row
-
 pattern_key = pattern.casefold()
 assert pattern_key, "case folding shouldn't make a non-empty string empty"
 
 try:
-    row = table_row(pattern_key)
+    row = table[pattern_key]
     if pattern in row:
         # We have an exact match.
         show_url(pattern)
@@ -236,7 +229,7 @@ except KeyError:
             break
         
         prev_similarity = similarity
-        row = table_row(key)
+        row = table[key]
         remaining -= len(row)
         show_repos(row)
     

@@ -92,9 +92,14 @@ def substring_frequency_vector(key):
     return collections.Counter(key[start:stop] for stop in range(len(key) + 1)
                                                for start in range(stop))
 
+def _inner_product(u, v):
+    '''Does the actual work of computing the (substr -> freq) dot product.'''
+    return sum(freq * v[substr] for substr, freq in u.items())
+
 def inner_product(u, v):
     '''Computes the dot product of two (substr -> freq) mappings.'''
-    return sum(freq * v[substr] for substr, freq in u.items())
+    # Iterate through the vector with smaller support, to save time.
+    return _inner_product(v, u) if len(v) < len(u) else _inner_product(u, v)
 
 def square(u):
     '''Computes the dot product of a (substr -> freq) mapping with itself.'''

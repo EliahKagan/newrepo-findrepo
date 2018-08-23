@@ -256,6 +256,9 @@ except KeyError:
                 % pattern)
         exit(0) # But even this situation is *not* considered an error.
 
+    # FIXME: remove after debugging
+    print('len(guesses) = %d' % len(guesses), file=sys.stderr)
+
     if len(guesses) == 1 and len(table[guesses[0].key]) == 1:
         print('I have no "%s" repo. This repo has a vaguely similar name...'
                 % pattern)
@@ -266,7 +269,7 @@ except KeyError:
 
     prev_similarity = float('inf') # becuase Python 3.4 doesn't have math.inf
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
-    
+
     for key, similarity in guesses:
         delta = prev_similarity - similarity
         assert delta >= 0.0, 'guesses must be sorted from more to less similar'

@@ -305,5 +305,5 @@ except KeyError:
 
     if guesses:
         print()
-        suggest_guesses()
+        suggest_guesses(guesses, table)
         print()

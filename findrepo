@@ -218,7 +218,7 @@ def debug_guesses(guesses):
     for key, similarity in guesses:
         angle = math.acos(similarity)
 
-        print('\t%.6f \t%-*s \t%5g rad \t%5g\N{DEGREE SIGN}'
+        print('\t%.6f \t%-*s \t%.3f rad \t%.3f\N{DEGREE SIGN}'
               % (similarity, max_key_width, key, angle, math.degrees(angle)),
               file=sys.stderr)
 

@@ -250,7 +250,7 @@ def announce_guesses(guesses, table, pattern):
     '''Prints a heading explaining if guesses are about to be suggested.'''
     situation = 'I have no "%s" repo' % pattern
     if not guesses:
-        print('%s, nor any named even vaguely like it.' % pattern)
+        print('%s, nor any named even vaguely like it.' % situation)
     elif len(guesses) == 1 and len(table[guesses[0].key]) == 1:
         print('%s. This repo has a vaguely similar name...' % situation)
     else:

@@ -205,14 +205,16 @@ def square(u):
 
 def debug_guesses(guesses):
     '''Prints all cosine similarities if the trigger to do so is defined.'''
-    if COSINE_SIMILARITY_DEBUG_TRIGGER in os.environ:
-        print('The environment variable %s is defined. The following'
-              % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
-        print('is a table of cosine similarities between the pattern key'
-              ' and EACH repo key:', file=sys.stderr)
-        for key, similarity in guesses:
-            print('\t%.6f\t%s' % (similarity, key), file=sys.stderr)
-        print(file=sys.stderr)
+    if COSINE_SIMILARITY_DEBUG_TRIGGER not in os.environ:
+        return
+
+    print('The environment variable %s is defined. The following'
+          % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
+    print('is a table of cosine similarities between the pattern key and EACH'
+          ' repo key:', file=sys.stderr)
+    for key, similarity in guesses:
+        print('\t%.6f\t%s' % (similarity, key), file=sys.stderr)
+    print(file=sys.stderr)
 
 
 def keys_with_substring_cosine_similarity(keys, pattern_key):

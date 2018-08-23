@@ -200,24 +200,6 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     debug_guesses(guesses)
     return guesses
 
-def get_guesses_or_bail(keys, pattern_key, pattern):
-    '''Seeks good guesses, explains the situation, and returns them or quits.'''
-    guesses = keys_with_substring_cosine_similarity(keys, pattern_key)
-    try:
-        if guesses[0].similarity >= COSINE_SIMILARITY_CUTOFF:
-            print('I have no "%s" repo.'
-                  ' These repos have vaguely similar names...' % pattern)
-            print()
-
-            return guesses
-        else:
-            print('I have no "%s" repo, nor any named even vaguely like it.'
-                    % pattern)
-    except IndexError:
-        print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
-    
-    exit(0)
-
 # Get the pattern now so we fail fast on syntax errors.
 pattern = get_pattern()
 
@@ -238,10 +220,22 @@ try:
         show_multiple_casefolds(pattern, row)
 except KeyError:
     # We don't even have a case-insensitive match. Suggest guesses to the user.
-    guesses = get_guesses_or_bail(table.keys(), pattern_key, pattern)
-    prev_similarity = float('inf') # Python 3.4 doesn't have math.inf.
-    remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
+    guesses = keys_with_substring_cosine_similarity(table.keys(), pattern_key)
+    if not guesses:
+        print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
+        exit(0)
+    
+    prev_similarity = guesses[0].similarity
+    if prev_similarity < COSINE_SIMILARITY_CUTOFF:
+        print('I have no "%s" repo, nor any named even vaguely like it.'
+                % pattern)
+        exit(0)
+    
+    print('I have no "%s" repo. These repos have vaguely similar names...'
+            % pattern)
+    print()
 
+    remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
     for key, similarity in guesses:
         delta = prev_similarity - similarity
         assert delta >= 0.0, 'guesses must be sorted from more to less similar'

@@ -192,7 +192,7 @@ def substring_frequency_vector(key):
                                for start in range(stop))
 
 
-def _inner_product(u, v):
+def _inner_product(u, v):  # pylint: disable=invalid-name
     '''Does the actual work of computing the (substr -> freq) dot product.'''
     return sum(freq * v[substr] for substr, freq in u.items())
 
@@ -203,9 +203,9 @@ def inner_product(u, v):
     return _inner_product(v, u) if len(v) < len(u) else _inner_product(u, v)
 
 
-def square(u):
+def square(vector):
     '''Computes the dot product of a (substr -> freq) mapping with itself.'''
-    return sum(freq * freq for freq in u.values())
+    return sum(freq * freq for freq in vector.values())
 
 
 def debug_guesses(guesses):

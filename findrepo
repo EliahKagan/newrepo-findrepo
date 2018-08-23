@@ -258,6 +258,7 @@ except KeyError:
 
     # FIXME: remove after debugging
     print('len(guesses) = %d' % len(guesses), file=sys.stderr)
+    print('len(table[guesses[0].key]) = %d' % len(table[guesses[0].key]), file=sys.stderr)
 
     if len(guesses) == 1 and len(table[guesses[0].key]) == 1:
         print('I have no "%s" repo. This repo has a vaguely similar name...'

@@ -212,8 +212,16 @@ def debug_guesses(guesses):
           % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
     print('is a table of cosine similarities between the pattern key and EACH'
           ' repo key:', file=sys.stderr)
+
+    max_key_width = max(len(guess.key) for guess in guesses)
+
     for key, similarity in guesses:
-        print('\t%.6f\t%s' % (similarity, key), file=sys.stderr)
+        angle = math.acos(similarity)
+
+        print('\t%.6f \t%-*s \t%.6f rad \t%.6f \N{DEGREE_SIGN}'
+              % (similarity, max_key_width, key, angle, math.degrees(angle)),
+              file=sys.stderr)
+
     print(file=sys.stderr)
 
 

@@ -112,7 +112,7 @@ def get_pattern():
 def all_repos():
     '''Gets the names of all repos.'''
     os.chdir(REPO_DIR)  # We never depend on the original CWD, so this is fine.
-    return map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX))
+    return list(map(trim_suffix, glob.iglob('?*' + GIT_SUFFIX)))
 
 
 def group_by_casefold(names):
@@ -299,7 +299,6 @@ pattern = get_pattern()
 
 # Retrieve the repos. Stop if there weren't any, which we consider an error.
 repos = all_repos()
-print(repos)  # FIXME: remove after debugging
 if not repos:
     print('I have no "%s" repo. In fact, I have no repos at all!' % pattern)
     exit(1)

@@ -20,7 +20,7 @@ GIT_SUFFIX = '.git'
 COSINE_SIMILARITY_DEBUG_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
 
 # When no repo matches the user's pattern, even case-insensitively, we guess
-# based on cosine similarity of multisets of proper substrings. We show at
+# based on cosine similarity of multisets of non-empty substrings. We show at
 # least this many guesses unless no known repos have even slightly similar
 # names. And we may show more, if it would be confusing not to. (See below.)
 COSINE_SIMILARITY_SUGGESTION_COUNT = 5

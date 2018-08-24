@@ -123,7 +123,7 @@ def name_alert(message):
     else:
         intro = 'Note: '
     print(as_alert(intro + message % FINDREPO_COMMAND), file=sys.stderr)
-    print() # to stdout, to separate this from the remaining output
+    print()  # to stdout, to separate this from the remaining output
 
 
 def same_file(path1, path2):

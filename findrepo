@@ -123,7 +123,8 @@ def name_alert(message):
     else:
         intro = 'Note: '
     print(as_alert(intro + message % FINDREPO_COMMAND), file=sys.stderr)
-    print()  # to stdout, to separate this from the remaining output
+    sys.stderr.flush()  # Windows frontends, connected via SSH, need this.
+    print()  # Goes to stdout, to separate this from the remaining output.
 
 
 def same_file(path1, path2):
@@ -283,7 +284,7 @@ def debug_guesses(guesses):
               file=sys.stderr)
 
     print(file=sys.stderr)
-    sys.stderr.flush()  # long-shot hope this will help with Windows bug
+    sys.stderr.flush()  # Windows frontends, connected via SSH, need this.
 
 
 def keys_with_substring_cosine_similarity(keys, pattern_key):

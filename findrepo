@@ -16,6 +16,12 @@ import math
 import os
 import sys
 
+# The expected and recommended name for this command.
+FINDREPO_COMMAND = 'findrepo'
+
+# The full path where this script is expected to be installed systemwide.
+SYSTEM_FINDREPO_PATH = '/usr/local/bin/' + FINDREPO_COMMAND
+
 # The directory on the server where repos are kept.
 REPO_DIR = '/repos'
 
@@ -48,6 +54,12 @@ COSINE_SIMILARITY_CUTOFF = 0.1
 # Also, you might want matches that are believed to be fairly bad, for
 # debugging. For that, increase this to some still bigger positive value.
 COSINE_SIMILARITY_EPSILON = 0.0001
+
+# ANSI escape code for whatever color alerts (used sparingly) are shown in.
+ALERT_COLOR = '\033[91m'  # bright red
+
+# ANSI escape code to restore normal text color and style. Don't change this.
+NORMAL_COLOR = '\033[0m'
 
 assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0
 assert COSINE_SIMILARITY_CUTOFF > 0.0
@@ -94,6 +106,35 @@ Guess.__doc__ = '''
 A case-folded repo name and its cosine similarity to some case-folded
 user-provided pattern.
 '''
+
+
+def as_alert(text):
+    '''Adds ANSI escape codes around text so it will be highlighted.'''
+    return '%s%s%s' % (ALERT_COLOR, text, NORMAL_COLOR)
+
+
+def name_alert(message):
+    '''Writes a paragraph alert, with %s replaced by the command name.'''
+    print(as_alert('Note: ' + text % FINDREPO_COMMAND), file=sys.stderr)
+    print() # to stdout, to separate this from the remaining output
+
+
+def same_file(path1, path2):
+    '''Tells if two paths seem to be, or be symlinks to, the same file.'''
+    stat1 = os.stat(path1)
+    stat2 = os.stat(path2)
+    return stat1.st_dev == stat2.st_dev and stat1.st_ino == stat2.st_ino
+
+
+def version_check():
+    '''Warns if this doesn't appear to be the systemwide findrepo script.'''
+    try:
+        if not same_file(__file__, SYSTEM_FINDREPO_PATH):
+            name_alert("This isn't the globally installed version of %s.")
+    except FileNotFoundError:
+        name_alert('%s seems not to be globally installed.')
+    except PermissionError:
+        name_alert('Permission error checking if %s is globally installed.')
 
 
 def usage():
@@ -350,4 +391,5 @@ def run():
 
 
 if __name__ == '__main__':
+    version_check()
     run()

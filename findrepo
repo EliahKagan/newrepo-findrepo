@@ -344,5 +344,6 @@ def run():
     # We are ready to match repo names to the user's pattern.
     find_repo(table, pattern, pattern_key)
 
+
 if __name__ == '__main__':
     run()

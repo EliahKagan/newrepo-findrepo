@@ -55,7 +55,7 @@ COSINE_SIMILARITY_CUTOFF = 0.1
 # debugging. For that, increase this to some still bigger positive value.
 COSINE_SIMILARITY_EPSILON = 0.0001
 
-# ANSI escape code for whatever color alerts (used sparingly) are shown in.
+# ANSI escape code for some color to use for (sparingly issued) alerts.
 ALERT_COLOR = '\033[91m'  # bright red
 
 # ANSI escape code to restore normal text color and style. Don't change this.

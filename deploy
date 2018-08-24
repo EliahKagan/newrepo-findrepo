@@ -1,2 +1,4 @@
 #!/bin/sh
+
 install -g mob -m 750 newrepo /usr/local/bin/
+install -g mob -m 750 findrepo /usr/local/bin/

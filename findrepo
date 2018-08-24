@@ -142,7 +142,7 @@ def version_check():
     except FileNotFoundError:
         name_alert('%s seems not to be globally installed.')
     except PermissionError:
-        name_alert('Permission error checking if %s is globally installed.')
+        name_alert("I can't tell if %s is globally installed.")
 
 
 def usage():

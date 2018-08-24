@@ -35,7 +35,7 @@ URL_PREFIX = 'ssh://team-roach.ddns.net/repos/'
 GIT_SUFFIX = '.git'
 
 # This environment variable has us print all cosine similarities. (See below.)
-COSINE_SIMILARITY_DEBUG_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
+COSINE_SIMILARITY_DEBUG_MODE_TRIGGER = 'DEBUG_COSINE_SIMILARITY'
 
 # When no repo matches the user's pattern, even case-insensitively, we guess
 # based on cosine similarity of multisets of non-empty substrings. We show at
@@ -263,11 +263,11 @@ def square(vector):
 
 def debug_guesses(guesses):
     '''Prints all cosine similarities if the trigger to do so is defined.'''
-    if COSINE_SIMILARITY_DEBUG_TRIGGER not in os.environ:
+    if COSINE_SIMILARITY_DEBUG_MODE_TRIGGER not in os.environ:
         return
 
     print('The environment variable %s is defined. The following'
-          % COSINE_SIMILARITY_DEBUG_TRIGGER, file=sys.stderr)
+          % COSINE_SIMILARITY_DEBUG_MODE_TRIGGER, file=sys.stderr)
     print('is a table of cosine similarities between the pattern key and EACH'
           ' repo key:', file=sys.stderr)
 
@@ -309,10 +309,10 @@ def plausible_guesses(keys, pattern_key):
     '''Gets all guesses that seem good enough to possibly show the user.'''
     # Computing substring cosine similarities is the asymptotically slowest
     # step and COSINE_SIMILARITY_CUTOFF is small. If we pruned guesses before
-    # sorting when we didn't have COSINE_SIMILARITY_DEBUG_TRIGGER but after
-    # sorting when we did, the program would be more complicated and bug-prone,
-    # with only a small improvement in peformance. For the same reason, I
-    # haven't written a binary search, nor made Guess a fully-fledged class
+    # sorting when we have COSINE_SIMILARITY_DEBUG_MODE_TRIGGER, but after
+    # sorting when we don't, the program would be more complicated and bug-
+    # prone, with only a small improvement in peformance. For the same reason,
+    # I haven't written a binary search, nor made Guess a fully-fledged class
     # with __lt__ to use the bisect module (note also that such a class should
     # define __slots__ = () for the effect on performance to remain positive).
     guesses = keys_with_substring_cosine_similarity(keys, pattern_key)

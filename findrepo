@@ -115,7 +115,7 @@ def as_alert(text):
 
 def name_alert(message):
     '''Writes a paragraph alert, with %s replaced by the command name.'''
-    print(as_alert('Note: ' + text % FINDREPO_COMMAND), file=sys.stderr)
+    print(as_alert('Note: ' + message % FINDREPO_COMMAND), file=sys.stderr)
     print() # to stdout, to separate this from the remaining output
 
 

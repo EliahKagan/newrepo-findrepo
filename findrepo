@@ -315,7 +315,7 @@ def plausible_guesses(keys, pattern_key):
     # step and COSINE_SIMILARITY_CUTOFF is small. If we pruned guesses before
     # sorting when we have COSINE_SIMILARITY_DEBUG_MODE_TRIGGER, but after
     # sorting when we don't, the program would be more complicated and bug-
-    # prone, with only a small improvement in peformance. For the same reason,
+    # prone, with only a small improvement in performance. For the same reason,
     # I haven't written a binary search, nor made Guess a fully-fledged class
     # with __lt__ to use the bisect module (note also that such a class should
     # define __slots__ = () for the effect on performance to remain positive).
@@ -342,7 +342,7 @@ def announce_guesses(guesses, table, pattern):
 
 def suggest_guesses(guesses, table):
     """Suggests guesses to the user."""
-    prev_similarity = float('inf')  # Becuase Python 3.4 doesn't have math.inf.
+    prev_similarity = float('inf')  # Because Python 3.4 doesn't have math.inf.
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
 
     for key, similarity in guesses:

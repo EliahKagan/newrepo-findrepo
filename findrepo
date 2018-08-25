@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''
+"""
 This utility runs on the server, where it reports a URL clients should use to
 clone an existing repo or to add it as a remote. If the repo is not found, it
 makes suggestions to the user about which existing repo they might intend.
@@ -7,7 +7,7 @@ makes suggestions to the user about which existing repo they might intend.
 Usage:
 
     findrepo NAME
-'''
+"""
 
 import collections
 import contextlib
@@ -70,20 +70,20 @@ assert COSINE_SIMILARITY_EPSILON >= 0.0
 
 
 class LazyRowSorter:
-    '''An associative table that sorts its rows when they are accessed.'''
+    """An associative table that sorts its rows when they are accessed."""
     __slots__ = ('_rows',)
 
     def __init__(self):
-        '''Creates a LazyRowSorter that doesn't have any rows yet.'''
+        """Creates a LazyRowSorter that doesn't have any rows yet."""
         # Not a defaultdict. Nonexistent row *retrieval* should raise KeyError.
         self._rows = {}
 
     def __bool__(self):
-        '''Indicates if the table is nonempty (i.e., has one or more rows).'''
+        """Indicates if the table is nonempty (i.e., has one or more rows)."""
         return bool(self._rows)
 
     def __getitem__(self, key):
-        '''Sorts and returns the row for key. Raises KeyError on failure.'''
+        """Sorts and returns the row for key. Raises KeyError on failure."""
         # The expected use is to retrieve a row 0, 1, or occasionally 2 times.
         # Even if it happens more, Timsort is very fast with presorted data.
         row = self._rows[key]
@@ -92,32 +92,32 @@ class LazyRowSorter:
         return row
 
     def put(self, key, item):
-        '''Adds item to the row for key. Creates the row if there isn't one.'''
+        """Adds item to the row for key. Creates the row if there isn't one."""
         try:
             self._rows[key].append(item)
         except KeyError:
             self._rows[key] = [item]
 
     def keys(self):
-        '''Provides a view of the keys to each row.'''
+        """Provides a view of the keys to each row."""
         return self._rows.keys()
 
 
 Guess = collections.namedtuple('Guess', ('key', 'similarity'))
 
-Guess.__doc__ = '''
+Guess.__doc__ = """
 A case-folded repo name and its cosine similarity to some case-folded
 user-provided pattern.
-'''
+"""
 
 
 def as_alert(text):
-    '''Adds ANSI escape codes around text so it will be highlighted.'''
+    """Adds ANSI escape codes around text so it will be highlighted."""
     return '%s%s%s' % (ALERT_COLOR, text, NORMAL_COLOR)
 
 
 def name_alert(message):
-    '''Writes a paragraph alert, with %s replaced by the command name.'''
+    """Writes a paragraph alert, with %s replaced by the command name."""
     if REMOTE_FRONTEND_MODE_TRIGGER in os.environ:
         intro = 'Note (from server): '
     else:
@@ -128,14 +128,14 @@ def name_alert(message):
 
 
 def same_file(path1, path2):
-    '''Tells if two paths seem to be, or be symlinks to, the same file.'''
+    """Tells if two paths seem to be, or be symlinks to, the same file."""
     stat1 = os.stat(path1)
     stat2 = os.stat(path2)
     return stat1.st_dev == stat2.st_dev and stat1.st_ino == stat2.st_ino
 
 
 def version_check():
-    '''Warns if this doesn't appear to be the systemwide findrepo script.'''
+    """Warns if this doesn't appear to be the systemwide findrepo script."""
     try:
         if not same_file(__file__, SYSTEM_FINDREPO_PATH):
             name_alert("This isn't the globally installed version of %s.")
@@ -146,7 +146,7 @@ def version_check():
 
 
 def usage():
-    '''Prints a usage message and exits.'''
+    """Prints a usage message and exits."""
     # FIXME: When using sys.argv[0], print filename instead of full path if
     #        PATH lookup of the filename yields the full path in sys.argv[0].
     caller_name = os.environ.get(REMOTE_FRONTEND_MODE_TRIGGER, sys.argv[0])
@@ -155,13 +155,13 @@ def usage():
 
 
 def trim_suffix(path):
-    '''Assumes path ends in ".git" and removes it.'''
+    """Assumes path ends in ".git" and removes it."""
     assert path.endswith(GIT_SUFFIX), 'the suffix to be trimmed is not present'
     return path[:-len(GIT_SUFFIX)]
 
 
 def get_pattern():
-    '''Interprets the command-line argument as the name of a possible repo.'''
+    """Interprets the command-line argument as the name of a possible repo."""
     if len(sys.argv) != 2:
         usage()
     arg = sys.argv[1]
@@ -171,13 +171,13 @@ def get_pattern():
 
 
 def all_repos():
-    '''Gets the names of all repos.'''
+    """Gets the names of all repos."""
     os.chdir(REPO_DIR)  # We never depend on the original CWD, so this is fine.
     return [trim_suffix(path) for path in glob.iglob('?*' + GIT_SUFFIX)]
 
 
 def group_by_casefold(names):
-    '''Groups names by case-folding equivalence.'''
+    """Groups names by case-folding equivalence."""
     table = LazyRowSorter()
     for name in names:
         table.put(name.casefold(), name)
@@ -185,7 +185,7 @@ def group_by_casefold(names):
 
 
 def show_url(repo):
-    '''Displays the repo URL in a manner similar to the output of newrepo.'''
+    """Displays the repo URL in a manner similar to the output of newrepo."""
     print('The URL for the repository "%s" is:' % repo)
     print()
     print('\t%s%s%s' % (URL_PREFIX, repo, GIT_SUFFIX))
@@ -193,20 +193,20 @@ def show_url(repo):
 
 
 def show_repos(row):
-    '''Prints all repo names from row.'''
+    """Prints all repo names from row."""
     for repo in row:
         print('\t%s' % repo)
 
 
 def show_repos_with_match_mark(row, pattern):
-    '''Prints all repo names from row, indicating which matches the pattern.'''
+    """Prints all repo names from row, indicating which matches the pattern."""
     for repo in row:
         mark = '*' if repo == pattern else ''
         print('%7s %s' % (mark, repo))
 
 
 def show_exact_match(pattern, row):
-    '''Assumes an exact match, shows it, and warns about any case clashes.'''
+    """Assumes an exact match, shows it, and warns about any case clashes."""
     show_url(pattern)
 
     if len(row) != 1:
@@ -222,7 +222,7 @@ def show_exact_match(pattern, row):
 
 
 def show_unique_casefold(pattern, row):
-    '''Assumes an inexact unique case-insensitive match. Shows it and warns.'''
+    """Assumes an inexact unique case-insensitive match. Shows it and warns."""
     print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
     print()
     show_url(row[0])
@@ -230,7 +230,7 @@ def show_unique_casefold(pattern, row):
 
 
 def show_multiple_casefolds(pattern, row):
-    '''Assumes no exact match and two or more casefolds. Shows them all.'''
+    """Assumes no exact match and two or more casefolds. Shows them all."""
     print('I have no "%s" repo. Maybe you want one of these...' % pattern)
     print()
     show_repos(row)
@@ -242,30 +242,30 @@ def show_multiple_casefolds(pattern, row):
 
 
 def substring_frequency_vector(key):
-    '''Computes (substring -> frequency) mappings, represented as a Counter.'''
+    """Computes (substring -> frequency) mappings, represented as a Counter."""
     return collections.Counter(key[start:stop]
                                for stop in range(len(key) + 1)
                                for start in range(stop))
 
 
 def _inner_product(u, v):  # pylint: disable=invalid-name
-    '''Does the actual work of computing the (substr -> freq) dot product.'''
+    """Does the actual work of computing the (substr -> freq) dot product."""
     return sum(freq * v[substr] for substr, freq in u.items())
 
 
 def inner_product(u, v):  # pylint: disable=invalid-name
-    '''Computes the dot product of two (substr -> freq) mappings.'''
+    """Computes the dot product of two (substr -> freq) mappings."""
     # Iterate through the vector with smaller support, to save time.
     return _inner_product(v, u) if len(v) < len(u) else _inner_product(u, v)
 
 
 def square(vector):
-    '''Computes the dot product of a (substr -> freq) mapping with itself.'''
+    """Computes the dot product of a (substr -> freq) mapping with itself."""
     return sum(freq * freq for freq in vector.values())
 
 
 def debug_guesses(guesses):
-    '''Prints all cosine similarities if the trigger to do so is defined.'''
+    """Prints all cosine similarities if the trigger to do so is defined."""
     if COSINE_SIMILARITY_DEBUG_MODE_TRIGGER not in os.environ:
         return
 
@@ -288,10 +288,10 @@ def debug_guesses(guesses):
 
 
 def keys_with_substring_cosine_similarity(keys, pattern_key):
-    '''
+    """
     Gets all keys, in descending order of similarity to pattern_key. In cases
     of equal similarity, the tie is broken lexicographically by key text.
-    '''
+    """
     # This implementation precomputes squares, not norms, for better precision.
     vectors = {key: substring_frequency_vector(key) for key in keys}
     squares = {key: square(v) for key, v in vectors.items()}
@@ -299,7 +299,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
     pattern_square = square(pattern_vector)
 
     def pattern_similarity(key):
-        '''Computes a repo key vector's similarity to the pattern vector.'''
+        """Computes a repo key vector's similarity to the pattern vector."""
         return (inner_product(vectors[key], pattern_vector)
                 / math.sqrt(squares[key] * pattern_square))
 
@@ -310,7 +310,7 @@ def keys_with_substring_cosine_similarity(keys, pattern_key):
 
 
 def plausible_guesses(keys, pattern_key):
-    '''Gets all guesses that seem good enough to possibly show the user.'''
+    """Gets all guesses that seem good enough to possibly show the user."""
     # Computing substring cosine similarities is the asymptotically slowest
     # step and COSINE_SIMILARITY_CUTOFF is small. If we pruned guesses before
     # sorting when we have COSINE_SIMILARITY_DEBUG_MODE_TRIGGER, but after
@@ -330,7 +330,7 @@ def plausible_guesses(keys, pattern_key):
 
 
 def announce_guesses(guesses, table, pattern):
-    '''Prints a heading explaining if guesses are about to be suggested.'''
+    """Prints a heading explaining if guesses are about to be suggested."""
     situation = 'I have no "%s" repo' % pattern
     if not guesses:
         print('%s, nor any named even vaguely like it.' % situation)
@@ -341,7 +341,7 @@ def announce_guesses(guesses, table, pattern):
 
 
 def suggest_guesses(guesses, table):
-    '''Suggests guesses to the user.'''
+    """Suggests guesses to the user."""
     prev_similarity = float('inf')  # Becuase Python 3.4 doesn't have math.inf.
     remaining = COSINE_SIMILARITY_SUGGESTION_COUNT
 
@@ -358,7 +358,7 @@ def suggest_guesses(guesses, table):
 
 
 def find_repo(table, pattern, pattern_key):
-    '''Find the repo and show its URL, or give the user helpful suggestions.'''
+    """Find the repo and show its URL, or give the user helpful suggestions."""
     try:
         row = table[pattern_key]
 
@@ -382,7 +382,7 @@ def find_repo(table, pattern, pattern_key):
 
 
 def run():
-    '''Retrieves repo names and looks for one resembling the user's request.'''
+    """Retrieves repo names and looks for one resembling the user's request."""
     # Get the pattern now so we fail fast on syntax errors.
     pattern = get_pattern()
 

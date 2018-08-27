@@ -155,18 +155,27 @@ def usage():
     sys.exit(1)
 
 
-def trim_suffix(path):
+def _trim_git_suffix(path):
+    """Non-checking helper function for suffix-trimiming functions."""
+    return path[:-len(GIT_SUFFIX)]
+
+
+def trim_git_suffix(path):
     """Assumes path ends in ".git" and removes it."""
     assert path.endswith(GIT_SUFFIX), 'the suffix to be trimmed is not present'
-    return path[:-len(GIT_SUFFIX)]
+    return _trim_git_suffix(path)
+
+
+def trim_git_suffix_if_present(path):
+    """Returns path with any trailing occurrence of GIT_SUFFIX removed."""
+    return _trim_git_suffix(path) if path.endswith(GIT_SUFFIX) else path
 
 
 def get_pattern():
     """Interprets the command-line argument as the name of a possible repo."""
     if len(sys.argv) != 2:
         usage()
-    arg = sys.argv[1]
-    ret = trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
+    ret = trim_git_suffix_if_present(sys.argv[1])
     if '/' in ret or not ret:  # We want a valid dir name (or its basename).
         usage()
     return ret
@@ -175,7 +184,7 @@ def get_pattern():
 def all_repos():
     """Gets the names of all repos."""
     os.chdir(REPO_DIR)  # We never depend on the original CWD, so this is fine.
-    return [trim_suffix(path) for path in glob.iglob('*' + GIT_SUFFIX)]
+    return [trim_git_suffix(path) for path in glob.iglob('*' + GIT_SUFFIX)]
 
 
 def group_by_casefold(names):

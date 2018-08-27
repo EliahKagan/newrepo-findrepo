@@ -14,6 +14,7 @@ import contextlib
 import glob
 import math
 import os
+import shutil
 import sys
 
 # The expected and recommended name for this command.
@@ -146,11 +147,24 @@ def version_check():
         name_alert("I can't tell if %s is globally installed.")
 
 
+def invocation_name():
+    """An educated guess of what name was or should be used for findrepo."""
+    # If the path is relative, assume it is manually entered and just keep it.
+    pathname = sys.argv[0]
+    if not os.path.isabs(pathname):
+        return pathname
+
+    # If an absolute path's basename resolves to it exactly, use the basename.
+    filename = os.path.basename(pathname)
+    return filename if shutil.which(filename) == pathname else pathname
+
+
 def usage():
     """Prints a usage message and exits."""
-    # FIXME: When using sys.argv[0], print filename instead of full path if
-    #        PATH lookup of the filename yields the full path in sys.argv[0].
-    caller_name = os.environ.get(REMOTE_FRONTEND_MODE_TRIGGER, sys.argv[0])
+    try:
+        caller_name = os.environ[REMOTE_FRONTEND_MODE_TRIGGER]
+    except KeyError:
+        caller_name = invocation_name()
     print('Usage:  %s NAME' % caller_name, file=sys.stderr)
     sys.exit(1)
 

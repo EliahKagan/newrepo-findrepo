@@ -165,9 +165,10 @@ def get_pattern():
     if len(sys.argv) != 2:
         usage()
     arg = sys.argv[1]
-    if '/' in arg or not arg:  # We want a valid dir name (or its basename).
+    ret = trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
+    if '/' in ret or not ret:  # We want a valid dir name (or its basename).
         usage()
-    return trim_suffix(arg) if arg.endswith(GIT_SUFFIX) else arg
+    return ret
 
 
 def all_repos():

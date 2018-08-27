@@ -64,6 +64,7 @@ ALERT_COLOR = '\033[91m'  # bright red
 # ANSI escape code to restore normal text color and style. Don't change this.
 NORMAL_COLOR = '\033[0m'
 
+assert GIT_SUFFIX[:1] == '.', 'git repo suffix must start with "."'
 assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0
 assert COSINE_SIMILARITY_CUTOFF > 0.0
 assert COSINE_SIMILARITY_EPSILON >= 0.0
@@ -174,7 +175,7 @@ def get_pattern():
 def all_repos():
     """Gets the names of all repos."""
     os.chdir(REPO_DIR)  # We never depend on the original CWD, so this is fine.
-    return [trim_suffix(path) for path in glob.iglob('?*' + GIT_SUFFIX)]
+    return [trim_suffix(path) for path in glob.iglob('*' + GIT_SUFFIX)]
 
 
 def group_by_casefold(names):

@@ -170,7 +170,7 @@ def usage():
 
 
 def _trim_git_suffix(path):
-    """Non-checking helper function for suffix-trimiming functions."""
+    """Non-checking helper function for suffix-trimming functions."""
     return path[:-len(GIT_SUFFIX)]
 
 

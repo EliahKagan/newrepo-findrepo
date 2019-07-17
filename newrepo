@@ -5,7 +5,7 @@
 bad_command=1
 bad_config=2
 
-die() {
+bail() {
     status="$1"
     message="$2"
     printf '%s\n' "$message" >&2
@@ -16,11 +16,11 @@ conf='/etc/newrepo-findrepo.conf'
 {
     host="$(sed -nE 's/^host=([^[:space:]]+)$/\1/p' "$conf" | tail -n 1)" &&
     [ -n "$host" ]
-} || die "$bad_config" "Can't get host name configuration from $conf."
+} || bail "$bad_config" "Can't get host name configuration from $conf."
 
 name="$1"
 
-[ -n "$name" ] || die "$bad_command" 'What do you want to call the new repo?'
+[ -n "$name" ] || bail "$bad_command" 'What do you want to call the new repo?'
 
 dir="$name.git"
 url="ssh://$host/repos/$dir"

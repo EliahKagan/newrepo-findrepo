@@ -2,13 +2,28 @@
 # This utility runs on the server, where it creates a new repo. Usage:
 #    newrepo NAME
 
-if [ -z "$1" ]; then
-    printf 'What do you want to call the new repo?\n' >&2
-    exit 1
-fi
+bad_command=1
+bad_config=2
 
-dir="$1.git"
-url="ssh://team-roach.ddns.net/repos/$dir"
+die() {
+    status="$1"
+    message="$2"
+    printf '%s\n' "$message" >&2
+    exit "$status"
+}
+
+conf='/etc/newrepo-findrepo.conf'
+{ # FIXME: Probably clearer to use use if-then.
+    host="$(sed -nE 's/^host=([^[:space:]]+)$/\1/p' "$conf" | tail -n 1)" &&
+    [ -n "$host" ]
+} || die "$bad_config" "Can't get host name configuration from $conf."
+
+name="$1"
+
+[ -n "$name" ] || die "$bad_command" 'What do you want to call the new repo?'
+
+dir="$name.git"
+url="ssh://$host/repos/$dir"
 
 cd /repos && mkdir "$dir" && cd "$dir" && git init --bare &&
     printf '\nThe URL of the newly created repository is:\n\n\t%s\n\n' "$url"

@@ -13,7 +13,7 @@ die() {
 }
 
 conf='/etc/newrepo-findrepo.conf'
-{ # FIXME: Probably clearer to use use if-then.
+{
     host="$(sed -nE 's/^host=([^[:space:]]+)$/\1/p' "$conf" | tail -n 1)" &&
     [ -n "$host" ]
 } || die "$bad_config" "Can't get host name configuration from $conf."

@@ -188,7 +188,7 @@ def get_url_hostname(conf_path):
         alert("Can't read config from %s." % conf_path)
         raise
     except KeyError:
-        alert('No host config in %s.' + conf_path)
+        alert('No host config in %s.' % conf_path)
         raise
 
 

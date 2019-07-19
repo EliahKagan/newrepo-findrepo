@@ -33,9 +33,6 @@ REMOTE_FRONTEND_MODE_TRIGGER = 'FINDREPO_REMOTE_FRONTEND_COMMAND_NAME'
 # The directory on the server where repos are kept.
 REPO_DIR = '/repos'
 
-# The typical URL for a repo, up to but not including the repo name itself.
-URL_PREFIX = 'ssh://team-roach.ddns.net/repos/'
-
 # The extension that's expected, stripped from, and restored to repo pathnames.
 GIT_SUFFIX = '.git'
 
@@ -69,6 +66,7 @@ ALERT_COLOR = '\033[91m'  # bright red
 # ANSI escape code to restore normal text color and style. Don't change this.
 NORMAL_COLOR = '\033[0m'
 
+assert REPO_DIR and REPO_DIR[0] == '/' and REPO_DIR[-1] != '/'
 assert GIT_SUFFIX[:1] == '.', 'git repo suffix must start with "."'
 assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0
 assert COSINE_SIMILARITY_CUTOFF > 0.0
@@ -229,11 +227,11 @@ def group_by_casefold(names):
     return table
 
 
-def show_url(repo):
+def show_url(url_prefix, repo):
     """Displays the repo URL in a manner similar to the output of newrepo."""
     print('The URL for the repository "%s" is:' % repo)
     print()
-    print('\t%s%s%s' % (URL_PREFIX, repo, GIT_SUFFIX))
+    print('\t%s%s%s' % (url_prefix, repo, GIT_SUFFIX))
     print()
 
 
@@ -250,9 +248,9 @@ def show_repos_with_match_mark(row, pattern):
         print('%7s %s' % (mark, repo))
 
 
-def show_exact_match(pattern, row):
+def show_exact_match(url_prefix, pattern, row):
     """Assumes an exact match, shows it, and warns about any case clashes."""
-    show_url(pattern)
+    show_url(url_prefix, pattern)
 
     if len(row) != 1:
         # Warn the user that there are multiple case-insensitive matches.
@@ -266,11 +264,11 @@ def show_exact_match(pattern, row):
         print()
 
 
-def show_unique_casefold(pattern, row):
+def show_unique_casefold(url_prefix, pattern, row):
     """Assumes an inexact unique case-insensitive match. Shows it and warns."""
     print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
     print()
-    show_url(row[0])
+    show_url(url_prefix, row[0])
     print("BEWARE! The filesystem on this server is case-sensitive.")
 
 
@@ -428,6 +426,9 @@ def find_repo(table, pattern, pattern_key):
 
 def run():
     """Retrieves repo names and looks for one resembling the user's request."""
+    # Make the URL prefix first so we fail immediately on configuration errors.
+    url_prefix = 'ssh://%s%s/' % (get_url_hostname(CONF_PATH), REPO_DIR)
+
     # Get the pattern now so we fail fast on syntax errors.
     pattern = get_pattern()
 

@@ -75,20 +75,6 @@ assert COSINE_SIMILARITY_EPSILON >= 0.0
 CONF_MAPPING_REGEX = re.compile(r'^([^=]+)=(.+)$')
 
 
-def get_url_hostname(conf_path):
-    """Reads the configuration file and extracts the last "host" mapping."""
-    try:
-        with open(conf_path) as conf_file:
-            rows = map(CONF_MAPPING_REGEX.match, conf_file)
-            return {row.group(1): row.group(2) for row in rows if row}['host']
-    except OSError:
-        print("Can't read config from " + conf_path)
-    except KeyError:
-        print('No host config in ' + conf_path)
-
-    exit(2)
-
-
 class LazyRowSorter:
     """An associative table that sorts its rows when they are accessed."""
     __slots__ = ('_rows',)
@@ -185,6 +171,20 @@ def usage():
         caller_name = invocation_name()
     print('Usage:  %s NAME' % caller_name, file=sys.stderr)
     sys.exit(1)
+
+
+def get_url_hostname(conf_path):
+    """Reads the configuration file and extracts the last "host" mapping."""
+    try:
+        with open(conf_path) as conf_file:
+            rows = map(CONF_MAPPING_REGEX.match, conf_file)
+            return {row.group(1): row.group(2) for row in rows if row}['host']
+    except OSError:
+        print("Can't read config from " + conf_path)
+    except KeyError:
+        print('No host config in ' + conf_path)
+
+    exit(2)
 
 
 def _trim_git_suffix(path):

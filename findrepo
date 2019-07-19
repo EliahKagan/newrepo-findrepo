@@ -85,10 +85,10 @@ def get_url_hostname(conf_path):
             return {row.group(1): row.group(2) for row in rows if row}['host']
     except OSError:
         print("Can't read config from " + conf_path)
-        exit(2)
     except KeyError:
         print('No host config in ' + conf_path)
-        exit(2)
+
+    exit(2)
 
 
 class LazyRowSorter:

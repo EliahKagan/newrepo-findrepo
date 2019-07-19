@@ -2,21 +2,23 @@
 # This utility runs on the server, where it creates a new repo. Usage:
 #    newrepo NAME
 
-bad_command=1
-bad_config=2
+readonly conf='/etc/newrepo-findrepo.conf'
+
+readonly bad_command=1 bad_config=2
 
 bail() {
-    status="$1"
-    message="$2"
+    status="$1" message="$2"
     printf '%s\n' "$message" >&2
     exit "$status"
 }
 
-conf='/etc/newrepo-findrepo.conf'
-{
-    host="$(sed -nE 's/^host=([^[:space:]]+)$/\1/p' "$conf" | tail -n 1)" &&
-    [ -n "$host" ]
-} || bail "$bad_config" "Can't get host name configuration from $conf."
+get_host() {
+    conf_path="$1"
+    sed -nE 's/^host=([^[:space:]]+)$/\1/p' "$conf_path" | tail -n 1
+}
+
+{ host="$(get_host "$conf")" && [ -n "$host" ]; } ||
+    bail "$bad_config" "Can't get host name configuration from $conf."
 
 name="$1"
 

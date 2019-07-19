@@ -180,9 +180,9 @@ def get_url_hostname(conf_path):
             rows = map(CONF_MAPPING_REGEX.match, conf_file)
             return {row.group(1): row.group(2) for row in rows if row}['host']
     except OSError:
-        print("Can't read config from " + conf_path)
+        print("Can't read config from " + conf_path, file=sys.stderr)
     except KeyError:
-        print('No host config in ' + conf_path)
+        print('No host config in ' + conf_path, file=sys.stderr)
 
     exit(2)
 

@@ -69,8 +69,12 @@ NORMAL_COLOR = '\033[0m'
 # Matches a name=value line in findrepo's global configuration file.
 CONF_MAPPING_REGEX = re.compile(r'^([^=]+)=(.+)$')
 
-assert REPO_DIR and REPO_DIR[0] == '/' and REPO_DIR[-1] != '/'
+
+assert REPO_DIR and REPO_DIR[0] == '/' and REPO_DIR[-1] != '/', \
+        'git repo dir must be an absolute path with no trailing separator'
+
 assert GIT_SUFFIX[:1] == '.', 'git repo suffix must start with "."'
+
 assert COSINE_SIMILARITY_SUGGESTION_COUNT > 0
 assert COSINE_SIMILARITY_CUTOFF > 0.0
 assert COSINE_SIMILARITY_EPSILON >= 0.0

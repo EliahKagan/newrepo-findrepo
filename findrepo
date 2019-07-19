@@ -406,14 +406,6 @@ def find_repo(table, pattern, pattern_key):
     """Find the repo and show its URL, or give the user helpful suggestions."""
     try:
         row = table[pattern_key]
-
-        # We at least have a case-insensitive match.
-        if pattern in row:
-            show_exact_match(pattern, row)
-        elif len(row) == 1:
-            show_unique_casefold(pattern, row)
-        else:
-            show_multiple_casefolds(pattern, row)
     except KeyError:
         # We don't even have a case-insensitive match.
         guesses = plausible_guesses(table.keys(), pattern_key)
@@ -424,6 +416,14 @@ def find_repo(table, pattern, pattern_key):
             print()
             suggest_guesses(guesses, table)
             print()
+    else:
+        # We at least have a case-insensitive match.
+        if pattern in row:
+            show_exact_match(pattern, row)
+        elif len(row) == 1:
+            show_unique_casefold(pattern, row)
+        else:
+            show_multiple_casefolds(pattern, row)
 
 
 def run():

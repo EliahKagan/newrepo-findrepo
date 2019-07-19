@@ -1,3 +1,11 @@
+# .gitignore - ignore editor, IDE, and virtual environment files
+
+# IDE directories
 /.idea
 /.vscode
+
+# Editor tempfiles
+.*.swp
+
+# Virtual environments
 /venv

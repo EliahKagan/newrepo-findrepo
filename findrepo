@@ -122,15 +122,20 @@ def as_alert(text):
     return '%s%s%s' % (ALERT_COLOR, text, NORMAL_COLOR)
 
 
-def name_alert(message):
-    """Writes a paragraph alert, with %s replaced by the command name."""
+def alert(message):
+    """Writes a paragraph alert."""
     if REMOTE_FRONTEND_MODE_TRIGGER in os.environ:
         intro = 'Note (from server): '
     else:
         intro = 'Note: '
-    print(as_alert(intro + message % FINDREPO_COMMAND), file=sys.stderr)
+    print(as_alert(intro + message), file=sys.stderr)
     sys.stderr.flush()  # Windows frontends, connected via SSH, need this.
     print()  # Goes to stdout, to separate this from the remaining output.
+
+
+def name_alert(message_format):
+    """Writes a paragraph alert, with %s replaced by the command name."""
+    alert(message_format % FINDREPO_COMMAND)
 
 
 def same_file(path1, path2):

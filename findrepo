@@ -185,11 +185,11 @@ def get_url_hostname(conf_path):
             rows = map(CONF_MAPPING_REGEX.match, conf_file)
             return {row.group(1): row.group(2) for row in rows if row}['host']
     except OSError:
-        print("Can't read config from " + conf_path, file=sys.stderr)
+        alert("Can't read config from %s." % conf_path)
+        raise
     except KeyError:
-        print('No host config in ' + conf_path, file=sys.stderr)
-
-    exit(2)
+        alert('No host config in %s.' + conf_path)
+        raise
 
 
 def _trim_git_suffix(path):

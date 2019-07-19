@@ -1,0 +1,34 @@
+#!/bin/sh
+# check - Checks scripts with whatever checkers seem appropriate.
+
+set -e
+
+status=0
+
+do_check() {
+    checker="$1" path_to_check="$2"
+    printf 'Checking %s with %s.\n' "$2" "$1"
+    "$checker" -- "$path_to_check" || status="$?"
+}
+
+examine() {
+    path="$1"
+
+    case "$(file --mime-type -- "$1" | awk '{ print $2 }')" in
+    text/x-shellscript)
+        do_check shellcheck "$path"
+        ;;
+
+    text/x-python)
+        do_check pylint3 "$path"
+        do_check pycodestyle "$path"
+    esac
+}
+
+for f in *; do
+    if [ -f "$f" ] && [ -e "$f" ]; then
+        examine "$f"
+    fi
+done
+
+exit "$status"

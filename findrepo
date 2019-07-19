@@ -227,7 +227,7 @@ def group_by_casefold(names):
     return table
 
 
-def show_url(url_prefix, repo):
+def show_url(repo, url_prefix):
     """Displays the repo URL in a manner similar to the output of newrepo."""
     print('The URL for the repository "%s" is:' % repo)
     print()
@@ -248,9 +248,9 @@ def show_repos_with_match_mark(row, pattern):
         print('%7s %s' % (mark, repo))
 
 
-def show_exact_match(url_prefix, pattern, row):
+def show_exact_match(pattern, row, url_prefix):
     """Assumes an exact match, shows it, and warns about any case clashes."""
-    show_url(url_prefix, pattern)
+    show_url(pattern, url_prefix)
 
     if len(row) != 1:
         # Warn the user that there are multiple case-insensitive matches.
@@ -264,11 +264,11 @@ def show_exact_match(url_prefix, pattern, row):
         print()
 
 
-def show_unique_casefold(url_prefix, pattern, row):
+def show_unique_casefold(pattern, row, url_prefix):
     """Assumes an inexact unique case-insensitive match. Shows it and warns."""
     print('I have no "%s" repo. Perhaps you mean "%s"?' % (pattern, row[0]))
     print()
-    show_url(url_prefix, row[0])
+    show_url(row[0], url_prefix)
     print("BEWARE! The filesystem on this server is case-sensitive.")
 
 
@@ -400,7 +400,7 @@ def suggest_guesses(guesses, table):
         show_repos(row)
 
 
-def find_repo(table, pattern, pattern_key):
+def find_repo(table, pattern, pattern_key, url_prefix):
     """Find the repo and show its URL, or give the user helpful suggestions."""
     try:
         row = table[pattern_key]
@@ -417,9 +417,9 @@ def find_repo(table, pattern, pattern_key):
     else:
         # We at least have a case-insensitive match.
         if pattern in row:
-            show_exact_match(pattern, row)
+            show_exact_match(pattern, row, url_prefix)
         elif len(row) == 1:
-            show_unique_casefold(pattern, row)
+            show_unique_casefold(pattern, row, url_prefix)
         else:
             show_multiple_casefolds(pattern, row)
 
@@ -445,7 +445,7 @@ def run():
     assert pattern_key, "case folding shouldn't make a non-empty string empty"
 
     # We are ready to match repo names to the user's pattern.
-    find_repo(table, pattern, pattern_key)
+    find_repo(table, pattern, pattern_key, url_prefix)
 
 
 if __name__ == '__main__':

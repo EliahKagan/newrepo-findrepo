@@ -1,0 +1,19 @@
+#!/bin/sh
+# check - Checks scripts that look like shell scripts with ShellCheck.
+
+set -e
+
+looks_like_shellscript() {
+    file --mime-type -- "$1" | grep -q '[[:blank:]]text/x-shellscript$'
+}
+
+status=0
+
+for f in *; do
+    if [ -f "$f" ] && [ -e "$f" ] && looks_like_shellscript "$f"; then
+        printf 'Checking %s.\n' "$f"
+        shellcheck -- "$f" || status="$?"
+    fi
+done
+
+exit "$status"

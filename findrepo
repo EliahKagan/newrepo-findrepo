@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# findrepo - Finds a repo URL or suggests what repo the user might have meant.
+
 """
 This utility runs on the server, where it reports a URL clients should use to
 clone an existing repo or to add it as a remote. If the repo is not found, it

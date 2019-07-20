@@ -1,4 +1,4 @@
-# newrepo-findrepo - tools for small-scale Git servers
+# newrepo-findrepo - tools for small Git servers
 
 `newrepo` and `findrepo` are utilities that allow users with shell access to
 manage Git repositories. They are intended primarily for remote use via SSH,
@@ -191,7 +191,7 @@ If any of those look EXACTLY the same, they may have weird Unicode characters.
 ```
 
 The more interesting situation is when you spell the repository name
-incorrectly, or just guess wrong:
+incorrectly, or just flat-out guess wrong:
 
 ```none
 $ findrepo gnomviissn
@@ -215,5 +215,9 @@ I have no "visual-moon" repo. These repos have vaguely similar names...
         Mob
         NVI
 ```
+
+The short handful of "similar names" counter-guessed by `findrepo` often
+includes some that are wildly irrelevant and apparently dissimilar. But the one
+you're looking for is *usually* among them.
 
 ### How `findrepo` works, under the hood

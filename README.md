@@ -227,8 +227,9 @@ But the one you're looking for is *usually* among them.
 
 ### How `findrepo` works, under the hood
 
-`findrepo` matches guesses according to cosine similarity of nonempty-substring
-frequency vectors.
+`findrepo` matches guesses according to [cosine
+similarity](https://en.wikipedia.org/wiki/Cosine_similarity) of
+nonempty-substring frequency vectors.
 
 Ordinary spell-checkers address the use case of spellings that are wrong but
 very nearly right, and variations on that problem. They're typically based on
@@ -252,32 +253,32 @@ glean meaning from repositories' names. That seemed both interesting and quite
 hard. It also wasn't obvious to me that it would work better than a simpler
 approach. Repository names, which are often names of software projects or
 abbreviations thereof, are unusual applications of natural language; I didn't
-think a natural language approach would provide any clear advantage. More
-important, I wanted to start by writing a prototype that my own knowledge of
-algorithms and data structures would facilitate, and then iterate or redesign
-from there if it proved inadequate.
+think a natural language processing approach would provide any clear advantage.
+More important, I wanted to start by writing a prototype that my own knowledge
+of algorithms and data structures would facilitate, and then iterate or
+redesign from there if it proved inadequate.
 
 I had heard of [cosine similarity as a measure of document
 distance](https://www.youtube.com/watch?v=Zc54gFhdpLA). One approach, which
 does not apply to the problem `findrepo` solves but which is nonetheless
 illustrative, is to represent the similarity of natural-language documents as
 the normalized inner product of their word frequency vectors. I very briefly
-considered using cosine similarity of character-frequency vectors, but this was
+considered using cosine similarity of character frequency vectors, but this was
 obviously wrong—for example, the name of a repository and a scrambling thereof
 shouldn't match each other nearly a well as the name matches itself.
 
-What I settled on was to enumerate all nonempty substrings (by which I mean
-contiguous subsequences) of existing repository names and the user's guess and
-count the frequencies of each, then rate the proximity each repository name to
-the guess by the normalized inner product of that frequency vector. In this
-way, the mere presence of some of the same letters (in similar numbers) counts
-for something, but not too much, since most names contain many more substrings
-of greater lengths. In particular, this addresses the case of forgotten word
-order within a name, in such a way that `findrepo` doesn't need to figure out
-which substrings are the words. For example, with two words, a name has a left
-and right side (not necessarily the same length), and exchanging the sides
-removes the contributions of the substrings that cut across the break, but not
-of those on one side or the other of the break.
+What I settled on was to enumerate all nonempty substrings of existing
+repository names and the user's guess, counting the frequencies of each, then
+rate proximity of each repository name to the guess by the normalized inner
+product of that frequency vector. In this way, the mere presence of some of the
+same letters (in similar amounts) counts for something, but not too much, since
+most names contain many more substrings of greater lengths. In particular, this
+addresses the case of forgotten word order within a name, in such a way that
+`findrepo` doesn't need to understand which substrings are the words. For
+example, with two words, a name has a left and right side (not necessarily the
+same length), and exchanging the sides removes the contributions of the
+substrings that cut across the break, but not of those on one side or the other
+of the break.
 
 Case is ignored for purposes of assessing name similarity. I didn't think of a
 way of incorporating it that would justify the additional complexity. Cosine

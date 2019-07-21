@@ -65,7 +65,7 @@ This setup assumes all members of `coders` are trusted with access to all
 repositories. In particular, it permits users in that group to modify and even
 delete their fellow users' repositories.
 
-### SSHing from any system (but especially Unix-like systems)
+### SSHing manually
 
 One way to use these utilities from client machines is to run commands like:
 
@@ -77,19 +77,25 @@ ssh example.com newrepo gnomovision
 ssh example.com findrepo gnomovision
 ```
 
-Of course, you may wish to automate this with a script, shell function, or the
-like. Automating them on Windows can be slightly more complicated, so...
+You may wish to automate use of `newrepo` and `findrepo` with dedicated
+frontends, implemented as scripts, shell functions, or the like.
 
-### SSHing from Windows (supporting custom `%GIT_SSH%`, e.g., with `plink`)
+### Using newrepo-findrepo via nrr-frr
 
-Convenient key-based SSH authentication can be a bit challenging on Windows,
-so `nrr` and `frr` commands are provided in the separate **nrr-frr** repository
-to help Windows clients run `newrepo` and `findrepo` on a server.
+The `nrr` and `frr` frontends, provided in the (currently separate) nrr-frr
+repository, are suggested for this purpose. They're `$GIT_SSH`-aware, retrieve
+the appropriate hostname from a configuration file in the user's home
+directory, and are run like:
 
-This isn't actually necessary, but it can make it easier to authenticate the
-same way as when you performing remote actions with Git. For example, if you
-have a custom `%GIT_SSH%` environment variable that (directly or indirectly)
-runs `plink`, you might find nrr-frr helpful.
+```sh
+nrr gnomovision
+```
+
+```sh
+frr gnomovision
+```
+
+Those commands could correspond (roughly) to the `ssh` commands shown above.
 
 ### Using `newrepo`
 

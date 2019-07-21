@@ -1,4 +1,16 @@
 # .gitattributes - Allow platform line endings, except shell scripts need LF.
+#
+# This file is part of newrepo-findrepo, tools for small Git servers.
+#
+# Written in 2019 by Eliah Kagan <degeneracypressure@gmail.com>.
+#
+# To the extent possible under law, the author(s) have dedicated all copyright
+# and related and neighboring rights to this software to the public domain
+# worldwide. This software is distributed without any warranty.
+#
+# You should have received a copy of the CC0 Public Domain Dedication along
+# with this software. If not, see
+# <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 # Most files without dots are shell scripts. They need LF line endings.
 * text eol=lf
@@ -8,3 +20,7 @@ findrepo text eol=auto
 
 # Files with dots are normal text files. They should use the system default.
 *.* text eol=auto
+
+# The files containing copies of CC0 are normal text files too.
+COPYING text eol=auto
+LICENSE text eol=auto

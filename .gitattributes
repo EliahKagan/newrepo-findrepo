@@ -1,2 +1,3 @@
-newrepo text eol=lf
+check text eol=lf
 deploy text eol=lf
+newrepo text eol=lf

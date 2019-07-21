@@ -3,9 +3,9 @@
 `newrepo` and `findrepo` are utilities that allow users with shell access to
 manage Git repositories. They are intended primarily for remote use via SSH,
 though you can also use them locally. They run on Unix-like systems, but there
-is of course no limit on what system you SSH in from. The user running them
-should have access to traverse into and read the directory where repositories
-are kept, and needs write access to create new repository.
+is of course no limit on what system you SSH in from. The user running either
+tool needs access to traverse into and read the directory where repositories
+are kept, and needs write access to create new repositories with `newrepo`.
 
 I use these tools in production. However, for general use, I suggest
 considering them beta-quality (at best). They're missing some desirable
@@ -13,10 +13,10 @@ features and haven't been widely tested. As far as I'm aware, they're only
 deployed long-term on one machine in the world.
 
 Note that `findrepo` will take a long time and consume substantial RAM if
-repositories have unusually long names. In practice this is not a problem, and
-since in the recommended use case anyone who can run `findrepo` on a server can
-also run their own CPU and memory-intensive programs, it shouldn't have severe
-security implications.
+repositories have unusually long names. In practice this is not a problem. In
+the recommended use case anyone who can run `findrepo` on a server can also run
+their own CPU and memory-intensive programs, it shouldn't have severe security
+implications.
 
 See below for usage.
 

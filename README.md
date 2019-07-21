@@ -17,12 +17,12 @@ See below for usage.
 ### Configuration
 
 Currently, the path `/repos` is hard-coded as the directory where repositories
-are kept. This can be modified in `findrepo` and `newrepo`. **The only external
-configuration is the domain name (or IP address) that will be used in the
-`ssh://` URLs the tools output.** Using the ouptut of `hostname`, or other such
-methods, would not be reliable, especially when the server is a machine in a
-home or small office connected to the Internet with a NAT router, which is the
-primary use case for these tools.
+are kept. This can be modified by editing the source code of `findrepo` and
+`newrepo`. **The only external configuration is the domain name (or IP address)
+that will be used in the `ssh://` URLs the tools output.** Using the ouptut of
+`hostname`, or other such methods, would not be reliable, especially when the
+server is a machine in a home or small office connected to the Internet with a
+NAT router, which is the primary use case for these tools.
 
 `newrepo` and `findrepo` look for `/etc/newrepo-findrepo.conf` and expect it to
 contain a line of the form
@@ -40,7 +40,7 @@ repository intended for access by the remote URL
 
 ### Setting up your repositories directory
 
-I suggest making a group, e.g., `coders`, membership in which confers the
+I suggest making a group, e.g. `coders`, membership in which confers the
 ability to write to `/repos`. Make `/repos` a setgid directory with `root` as
 its owner and `coders` (or your chosen group name) as its group owner.
 
@@ -81,15 +81,16 @@ so `nrr` and `frr` commands are provided in the separate **nrr-frr** repository
 to help Windows clients run `newrepo` and `findrepo` on a server.
 
 This isn't actually necessary, but it can make it easier to authenticate the
-same way you when peforming remote actions with Git. For example, if you have a
-custom `%GIT_SSH%` environment variable that (directly or indirectly) runs
-`plink`, you might find nrr-frr helpful.
+same way as when you peforming remote actions with Git. For example, if you
+have a custom `%GIT_SSH%` environment variable that (directly or indirectly)
+runs `plink`, you might find nrr-frr helpful.
 
 ### Using `newrepo`
 
-`newrepo` creates a new bare Git repository in a top-level repo directory and
-reports the URL that can be used to clone it or add it as a remote. The name of
-the repository to be created is passed as a command-line argument.
+`newrepo` creates a new bare Git repository inside a top-level directory of
+repositories and reports the URL that can be used to clone it or add it as a
+remote. The name of the repository to be created is passed as a command-line
+argument.
 
 ```sh
 newrepo NAME
@@ -119,8 +120,8 @@ mkdir: cannot create directory ‘gnomovision.git’: File exists
 
 `findrepo` searches repositories in a top-level repo directory. It assumes the
 users intends an exact match but might be wrong, perhaps due to typos, but as
-likely to incomplete or mistaken memory about the name of the reposory they're
-looking for. The search pattern is passed as a command-line argument.
+likely due to incomplete or mistaken memory about the name of the reposory
+they're looking for. The search pattern is passed as a command-line argument.
 
 ```sh
 findrepo GUESS
@@ -129,7 +130,7 @@ findrepo GUESS
 Your guess can be pretty wildly wrong, and `findrepo` still usually manages to
 include what you meant in its small handful for suggestions.
 
-`findrepo` shows a URL when it's pretty sure that specific URL is what you
+`findrepo` shows a URL when it's pretty sure *that* specific URL is what you
 actually want (for cloning a repo or adding a remote). When there is any
 substantial ambiguity, is shows its own guesses but not a URL. You can run it
 again with one of those guesses to get a URL.
@@ -217,7 +218,7 @@ I have no "visual-moon" repo. These repos have vaguely similar names...
 ```
 
 The short handful of "similar names" counter-guessed by `findrepo` often
-includes some that are wildly irrelevant and apparently dissimilar. But the one
-you're looking for is *usually* among them.
+includes some you may find totally irrelevant and that apparently dissimilar.
+But the one you're looking for is *usually* among them.
 
 ### How `findrepo` works, under the hood

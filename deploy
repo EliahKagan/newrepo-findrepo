@@ -1,4 +1,27 @@
 #!/bin/sh
 
-install -g mob -m 750 newrepo /usr/local/bin/
-install -g mob -m 750 findrepo /usr/local/bin/
+set -f
+
+dest='/usr/local/bin'
+
+if [ "$#" -ne 1 ]; then
+    printf 'Usage: %s GROUP\n' "$0" >&2
+    exit 3
+fi
+
+group="$1"
+
+if [ "$(getent group "$group" | awk -F: '{ print $1 }')" -ne "$group" ]; then
+    printf '%s: error: no "%s" group\n' "$0" "$group" >&2
+    exit 2
+fi
+
+status=0
+
+for cmd in newrepo findrepo; do
+    install -g "$group" -m 750 "$cmd" "$dest/"
+    last_status="$?"
+    [ "$last_status" -eq 0 ] || [ "$status" -ne 0 ] || status="$last_status"
+done
+
+exit "$status"

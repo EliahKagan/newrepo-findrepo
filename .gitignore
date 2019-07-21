@@ -2,7 +2,6 @@
 
 # IDE directories
 /.idea
-/.vscode
 
 # Editor tempfiles
 .*.swp

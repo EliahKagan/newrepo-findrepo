@@ -25,7 +25,7 @@ See below for usage.
 Currently, the path `/repos` is hard-coded as the directory where repositories
 are kept. This can be modified by editing the source code of `findrepo` and
 `newrepo`. **The only external configuration is the domain name (or IP address)
-that will be used in the `ssh://` URLs the tools output.** Using the ouptut of
+that will be used in the `ssh://` URLs the tools output.** Using the output of
 `hostname`, or other such methods, would not be reliable, especially when the
 server is a machine in a home or small office connected to the Internet with a
 NAT router, which is the primary use case for these tools.
@@ -87,7 +87,7 @@ so `nrr` and `frr` commands are provided in the separate **nrr-frr** repository
 to help Windows clients run `newrepo` and `findrepo` on a server.
 
 This isn't actually necessary, but it can make it easier to authenticate the
-same way as when you peforming remote actions with Git. For example, if you
+same way as when you performing remote actions with Git. For example, if you
 have a custom `%GIT_SSH%` environment variable that (directly or indirectly)
 runs `plink`, you might find nrr-frr helpful.
 
@@ -124,7 +124,7 @@ mkdir: cannot create directory ‘gnomovision.git’: File exists
 
 `findrepo` searches repositories in a top-level repo directory. It assumes the
 users intends an exact match but might be wrong, perhaps due to typos, but as
-likely due to incomplete or mistaken memory about the name of the reposory
+likely due to incomplete or mistaken memory about the name of the repository
 they're looking for. The search pattern is passed as a command-line argument.
 
 ```sh
@@ -155,7 +155,7 @@ The URL for the repository "gnomovision" is:
 
 When there are other repositories that would have matched except for
 differences in capitalization (a situation that would typically arise only by
-accident), it gives yout the URL but also warns:
+accident), it gives you the URL but also warns:
 
 ```none
 $ findrepo TestRepo
@@ -260,7 +260,7 @@ from there if it proved inadequate.
 I had heard of [cosine similarity as a measure of document
 distance](https://www.youtube.com/watch?v=Zc54gFhdpLA). One approach, which
 does not apply to the problem `findrepo` solves but which is nonetheless
-ilustrative, is to represent the similarity of natural-language documents as
+illustrative, is to represent the similarity of natural-language documents as
 the normalized inner product of their word frequency vectors. I very briefly
 considered using cosine similarity of character-frequency vectors, but this was
 obviously wrong—for example, the name of a repository and a scrambling thereof

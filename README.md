@@ -290,4 +290,4 @@ necessary.
 
 The reason substrings must be *nonempty* to be considered is so length doesn't
 dominate too much. An *n*-character string contains *n + 1* empty substrings
-(one starting at each character position, and one starting at the end).
+(one at each character position, and one at the end).

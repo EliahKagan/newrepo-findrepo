@@ -34,6 +34,7 @@ examine() {
     text/x-python)
         do_check pylint3 "$path"
         do_check pycodestyle "$path"
+        ;;
     esac
 }
 

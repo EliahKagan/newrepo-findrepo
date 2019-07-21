@@ -12,6 +12,12 @@ considering them beta-quality (at best). They're missing some desirable
 features and haven't been widely tested. As far as I'm aware, they're only
 deployed long-term on one machine in the world.
 
+Note that `findrepo` will take a long time and consume substantial RAM if
+repositories have unusually long names. In practice this is not a problem, and
+since in the recommended use case anyone who can run `findrepo` on a server can
+also run their own CPU and memory-intensive programs, it shouldn't have severe
+security implications.
+
 See below for usage.
 
 ### Configuration
@@ -113,8 +119,6 @@ When it fails, its output is unlikely to be misunderstood as success:
 $ newrepo gnomovision
 mkdir: cannot create directory ‘gnomovision.git’: File exists
 ```
-
-
 
 ### Using `findrepo`
 
@@ -222,3 +226,68 @@ includes some you may find totally irrelevant and that apparently dissimilar.
 But the one you're looking for is *usually* among them.
 
 ### How `findrepo` works, under the hood
+
+`findrepo` matches guesses according to cosine similarity of nonempty-substring
+frequency vectors.
+
+Ordinary spell-checkers address the use case of spellings that are wrong but
+very nearly right, and variations on that problem. They're typically based on
+the idea of [edit distance](https://norvig.com/spell-correct.html). I
+considered this approach for `findrepo` but decided against it, because when
+users guess the name of a repository, they're often not guessing just about
+fine points of spelling. My concern wasn't that conceptual errors wouldn't be
+caught, but that they wouldn't be ranked high enough compared to typos or, if
+they were, then practically unlikely conceptual errors wouldn't be ranked low
+enough compared to practically likely ones.
+
+In hindsight, I'd characterize the difference between spell-checking and what
+`findrepo` does this way: spell-checkers find near-matches among many possible
+candidates, while `findrepo` finds farther-away matches among fairly few
+candidates. Since newrepo-findrepo is intended for small-scale use, it's
+unlikely to be used with more than a few thousand repositories. My own use is
+with hundreds.
+
+I briefly considered the approach of attempting to write something that would
+glean meaning from repositories' names. That seemed both interesting and quite
+hard. It also wasn't obvious to me that it would work better than a simpler
+approach. Repository names, which are often names of software projects or
+abbreviations thereof, are unusual applications of natural language; I didn't
+think a natural language approach would provide any clear advantage. More
+important, I wanted to start by writing a prototype that my own knowledge of
+algorithms and data structures would facilitate, and then iterate or redesign
+from there if it proved inadequate.
+
+I had heard of [cosine similarity as a measure of document
+distance](https://www.youtube.com/watch?v=Zc54gFhdpLA). One approach, which
+does not apply to the problem `findrepo` solves but which is nonetheless
+ilustrative, is to represent the similarity of natural-language documents as
+the normalized inner product of their word frequency vectors. I very briefly
+considered using cosine similarity of character-frequency vectors, but this was
+obviously wrong—for example, the name of a repository and a scrambling thereof
+shouldn't match each other nearly a well as the name matches itself.
+
+What I settled on was to enumerate all nonempty substrings (by which I mean
+contiguous subsequences) of existing repository names and the user's guess and
+count the frequencies of each, then rate the proximity each repository name to
+the guess by the normalized inner product of that frequency vector. In this
+way, the mere presence of some of the same letters (in similar numbers) counts
+for something, but not too much, since most names contain many more substrings
+of greater lengths. In particular, this addresses the case of forgotten word
+order within a name, in such a way that `findrepo` doesn't need to figure out
+which substrings are the words. For example, with two words, a name has a left
+and right side (not necessarily the same length), and exchanging the sides
+removes the contributions of the substrings that cut across the break, but not
+of those on one side or the other of the break.
+
+Case is ignored for purposes of assessing name similarity. I didn't think of a
+way of incorporating it that would justify the additional complexity. Cosine
+similarity is only used when the guess neither exactly matches the name of any
+existing repository nor matches it under case-folding equivalence. Thus all
+repository names have to be considered regardless of the guess (even given an
+exact match, there might be ambiguity to warn about), but cosine similarities
+are only computed—and nonempty substring frequency vectors only built—when
+necessary.
+
+The reason substrings must be *nonempty* to be considered is so length doesn't
+dominate too much. An *n*-character string contains *n + 1* empty substrings
+(one starting at each character position, and one starting at the end).

@@ -1,3 +1,10 @@
-check text eol=lf
-deploy text eol=lf
-newrepo text eol=lf
+# .gitattributes - Allow platform line endings, except shell scripts need LF.
+
+# Most files without dots are shell scripts. They need LF line endings.
+* text eol=lf
+
+# But findrepo is a Python script. The system default is acceptable for it.
+findrepo text eol=auto
+
+# Files with dots are normal text files. They should use the system default.
+*.* text eol=auto

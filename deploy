@@ -24,7 +24,7 @@ fi
 
 group="$1"
 
-if [ "$(getent group "$group" | awk -F: '{ print $1 }')" -ne "$group" ]; then
+if [ "$(getent group "$group" | awk -F: '{ print $1 }')" != "$group" ]; then
     printf '%s: error: no "%s" group\n' "$0" "$group" >&2
     exit 2
 fi

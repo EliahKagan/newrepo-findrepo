@@ -281,7 +281,7 @@ illustrative, is to represent the similarity of natural-language documents as
 the normalized inner product of their word frequency vectors. I very briefly
 considered using cosine similarity of character frequency vectors, but this was
 obviously wrong—for example, the name of a repository and a scrambling thereof
-shouldn't match each other nearly a well as the name matches itself.
+shouldn't match each other nearly as well as the name matches itself.
 
 What I settled on was to enumerate all nonempty substrings of existing
 repository names and the user's guess, counting the frequencies of each, then

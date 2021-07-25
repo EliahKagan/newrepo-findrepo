@@ -139,7 +139,7 @@ mkdir: cannot create directory ‘gnomovision.git’: File exists
 ### Using `findrepo`
 
 `findrepo` searches repositories in a top-level repo directory. It assumes the
-users intends an exact match but might be wrong, perhaps due to typos, but as
+user intends an exact match but might be wrong, perhaps due to typos, but as
 likely due to incomplete or mistaken memory about the name of the repository
 they're looking for. The search pattern is passed as a command-line argument.
 

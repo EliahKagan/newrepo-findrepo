@@ -28,7 +28,8 @@ the recommended use case anyone who can run `findrepo` on a server can also run
 their own CPU and memory-intensive programs, it shouldn't have severe security
 implications.
 
-See below for usage.
+See below for usage. See [nrr-frr](https://github.com/EliahKagan/nrr-frr) for
+the [suggested frontends](#using-newrepo-findrepo-via-nrr-frr).
 
 ### Configuration
 
@@ -92,10 +93,10 @@ frontends, implemented as scripts, shell functions, or the like.
 
 ### Using newrepo-findrepo via nrr-frr
 
-The `nrr` and `frr` frontends, provided in the (currently separate) nrr-frr
-repository, are suggested for this purpose. They're `$GIT_SSH`-aware, retrieve
-the appropriate hostname from a configuration file in the user's home
-directory, and are run like:
+The `nrr` and `frr` frontends, provided in the (currently separate)
+[nrr-frr](https://github.com/EliahKagan/nrr-frr) repository, are suggested for
+this purpose. They're `$GIT_SSH`-aware, retrieve the appropriate hostname from
+a configuration file in the user's home directory, and are run like:
 
 ```sh
 nrr gnomovision

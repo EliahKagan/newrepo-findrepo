@@ -28,8 +28,11 @@ the recommended use case anyone who can run `findrepo` on a server can also run
 their own CPU and memory-intensive programs, it shouldn't have severe security
 implications.
 
-See below for usage. See [nrr-frr](https://github.com/EliahKagan/nrr-frr) for
-the [suggested frontends](#using-newrepo-findrepo-via-nrr-frr).
+See below for usage. See [**nrr-frr**](https://github.com/EliahKagan/nrr-frr)
+for the [suggested frontends](#using-newrepo-findrepo-via-nrr-frr). You may
+also want to set up a lightweight web-based interface on your Git server; I use
+[cgit](https://git.zx2c4.com/cgit/) (see
+[setup-cgit](https://github.com/EliahKagan/setup-cgit)).
 
 ### Configuration
 

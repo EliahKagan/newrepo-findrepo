@@ -24,9 +24,9 @@ deployed long-term on one machine in the world.
 
 Note that `findrepo` will take a long time and consume substantial RAM if
 repositories have unusually long names. In practice this is not a problem. In
-the recommended use case anyone who can run `findrepo` on a server can also run
-their own CPU and memory-intensive programs, it shouldn't have severe security
-implications.
+the recommended use case, anyone who can run `findrepo` on a server can also
+run their own CPU and memory-intensive programs, so it shouldn't have severe
+security implications.
 
 See below for usage. See [**nrr-frr**](https://github.com/EliahKagan/nrr-frr)
 for the [suggested frontends](#using-newrepo-findrepo-via-nrr-frr). You may
